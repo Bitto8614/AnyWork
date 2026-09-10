@@ -77,8 +77,24 @@ app.get('/services', (_req, res) => {
   res.sendFile(path.join(__dirname, 'services.html'));
 });
 
+app.get('/how-it-works', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'how-it-works.html'));
+});
+
+app.get('/reviews', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'reviews.html'));
+});
+
+app.get('/pricing', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'pricing.html'));
+});
+
 app.get('/careers', (_req, res) => {
   res.sendFile(path.join(__dirname, 'careers.html'));
+});
+
+app.get('/areere', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'areere.html'));
 });
 
 app.get('/contact', (_req, res) => {
