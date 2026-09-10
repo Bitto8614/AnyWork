@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("contactForm");
   if (!form) return;
 
+  const API_BASE_URL =
+    window.ANYWORK_API_URL ||
+    "https://your-render-app-name.onrender.com";
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -19,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     button.textContent = "Sending...";
 
     try {
-      const response = await fetch("http://localhost:3001/api/contact", {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
