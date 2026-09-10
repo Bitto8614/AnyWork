@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const API_BASE_URL =
     window.ANYWORK_API_URL ||
-    "https://your-render-app-name.onrender.com";
+    "https://anywork-api.onrender.com";
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
