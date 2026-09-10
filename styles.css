@@ -23,7 +23,10 @@ html {
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(255, 122, 24, 0.12), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(18, 61, 138, 0.08), transparent 22%),
+    var(--bg);
   color: var(--text);
   line-height: 1.6;
 }
@@ -51,7 +54,7 @@ textarea {
 }
 
 .section {
-  padding: 6rem 0;
+  padding: 5rem 0;
 }
 
 .eyebrow {
@@ -71,6 +74,7 @@ textarea {
   backdrop-filter: blur(8px);
   background: rgba(246, 249, 252, 0.9);
   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 8px 26px rgba(18, 61, 138, 0.04);
 }
 
 .nav-wrap {
@@ -136,7 +140,7 @@ textarea {
 }
 
 .moving-carousel-section {
-  padding: 1.5rem 0 0;
+  padding: 1rem 0 0;
 }
 
 .moving-carousel {
@@ -204,22 +208,28 @@ textarea {
 }
 
 .hero {
-  padding: 5rem 0 3rem;
+  padding: 3rem 0 3rem;
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.4fr 0.9fr;
+  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.85fr);
   gap: 2rem;
   align-items: center;
 }
 
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .hero-copy h1 {
-  font-size: clamp(2.7rem, 6vw, 4.25rem);
+  font-size: clamp(2.4rem, 5vw, 4rem);
   line-height: 1.08;
   letter-spacing: -0.06em;
   margin: 0 0 1rem;
-  max-width: 620px;
+  max-width: 560px;
 }
 
 .hero-copy p {
@@ -256,6 +266,7 @@ textarea {
 .hero-media {
   display: grid;
   gap: 1rem;
+  align-content: center;
 }
 
 .media-row {
@@ -292,11 +303,15 @@ textarea {
 }
 
 .hero-card {
-  background: linear-gradient(180deg, var(--secondary), #1e4ca9);
+  background: linear-gradient(135deg, #0a1a35 0%, #123d8a 58%, #1c4ca8 100%);
   color: white;
   border-radius: 28px;
   padding: 2rem;
-  box-shadow: var(--shadow);
+  box-shadow: 0 25px 40px rgba(18, 61, 138, 0.2);
+  max-width: 420px;
+  margin-left: auto;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mini-label {
@@ -333,7 +348,7 @@ textarea {
 }
 
 .stats {
-  padding: 0 0 2rem;
+  padding: 0 0 2.5rem;
 }
 
 .stats-grid {
@@ -387,9 +402,9 @@ textarea {
 .price-card,
 blockquote {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(18, 61, 138, 0.08);
   border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(24, 33, 47, 0.04);
+  box-shadow: 0 12px 30px rgba(24, 33, 47, 0.05);
 }
 
 .service-card {
