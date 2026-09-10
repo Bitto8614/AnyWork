@@ -77,6 +77,17 @@ app.get('/services', (_req, res) => {
   res.sendFile(path.join(__dirname, 'services.html'));
 });
 
+app.get('/services/:slug', (req, res) => {
+  const { slug } = req.params;
+  const filePath = path.join(__dirname, 'services', `${slug}.html`);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).send('Service page not found.');
+  }
+
+  return res.sendFile(filePath);
+});
+
 app.get('/how-it-works', (_req, res) => {
   res.sendFile(path.join(__dirname, 'how-it-works.html'));
 });
