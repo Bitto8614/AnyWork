@@ -27,48 +27,94 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const form = document.getElementById("contactForm");
-  if (!form) return;
+  if (form) {
+    const API_BASE_URL =
+      window.ANYWORK_API_URL ||
+      "https://anywork-opoe.onrender.com";
 
-  const API_BASE_URL =
-    window.ANYWORK_API_URL ||
-    "https://anywork-opoe.onrender.com";
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+      const button = form.querySelector("button[type='submit']");
+      const originalText = button.textContent;
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
 
-    const button = form.querySelector("button[type='submit']");
-    const originalText = button.textContent;
-    const formData = new FormData(form);
-    const payload = Object.fromEntries(formData.entries());
+      button.disabled = true;
+      button.textContent = "Sending...";
 
-    button.disabled = true;
-    button.textContent = "Sending...";
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/contact`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+        const data = await response.json();
 
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Could not send request.");
+        }
 
-      if (!response.ok) {
-        throw new Error(data.message || "Could not send request.");
+        button.textContent = "Request sent!";
+        form.reset();
+      } catch (error) {
+        button.textContent = "Try again";
+        alert(error.message || "Something went wrong. Please try again.");
+      } finally {
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = originalText;
+        }, 2000);
       }
+    });
+  }
 
-      button.textContent = "Request sent!";
-      form.reset();
-    } catch (error) {
-      button.textContent = "Try again";
-      alert(error.message || "Something went wrong. Please try again.");
-    } finally {
-      setTimeout(() => {
-        button.disabled = false;
-        button.textContent = originalText;
-      }, 2000);
-    }
-  });
+  const careerForm = document.getElementById("careerForm");
+  if (careerForm) {
+    const API_BASE_URL =
+      window.ANYWORK_API_URL ||
+      "https://anywork-opoe.onrender.com";
+
+    careerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const button = careerForm.querySelector("button[type='submit']");
+      const originalText = button.textContent;
+      const formData = new FormData(careerForm);
+      const payload = Object.fromEntries(formData.entries());
+
+      button.disabled = true;
+      button.textContent = "Registering...";
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/career/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Could not register.");
+        }
+
+        button.textContent = "Registered!";
+        careerForm.reset();
+      } catch (error) {
+        button.textContent = "Try again";
+        alert(error.message || "Something went wrong. Please try again.");
+      } finally {
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = originalText;
+        }, 2000);
+      }
+    });
+  }
 });

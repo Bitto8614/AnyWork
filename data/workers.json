@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1789069098447,
+    "name": "Test Helper",
+    "email": "demo@example.com",
+    "phone": "1112223333",
+    "service": "Moving help",
+    "details": "Available weekends and evenings.",
+    "createdAt": "2026-09-10T19:38:18.447Z"
+  }
+]

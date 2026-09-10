@@ -1,11 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const resend = new Resend(process.env.RESEND_API_KEY);
+const workersFilePath = path.join(__dirname, 'data', 'workers.json');
+
+function readWorkers() {
+  try {
+    const raw = fs.readFileSync(workersFilePath, 'utf8');
+    return JSON.parse(raw);
+  } catch (error) {
+    return [];
+  }
+}
+
+function writeWorkers(workers) {
+  fs.writeFileSync(workersFilePath, JSON.stringify(workers, null, 2));
+}
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
@@ -17,7 +33,8 @@ app.get('/', (_req, res) => {
     service: 'AnyWork email API',
     endpoints: {
       health: '/api/health',
-      contact: '/api/contact'
+      contact: '/api/contact',
+      career: '/api/career/register'
     }
   });
 });
@@ -71,6 +88,35 @@ app.post('/api/contact', async (req, res) => {
       error: error.message,
     });
   }
+});
+
+app.post('/api/career/register', (req, res) => {
+  const { name, email, phone, service, details } = req.body || {};
+
+  if (!name || !email || !phone || !service || !details) {
+    return res.status(400).json({
+      message: 'Please provide your name, email, phone, service, and experience details.'
+    });
+  }
+
+  const workers = readWorkers();
+  const newEntry = {
+    id: Date.now(),
+    name,
+    email,
+    phone,
+    service,
+    details,
+    createdAt: new Date().toISOString()
+  };
+
+  workers.push(newEntry);
+  writeWorkers(workers);
+
+  return res.status(200).json({
+    message: 'Registration saved successfully.',
+    worker: newEntry
+  });
 });
 
 app.listen(PORT, () => {
