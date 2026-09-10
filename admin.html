@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AnyWork Admin</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f6f9fc;
+        color: #18212f;
+        padding: 2rem;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin-bottom: 1rem;
+      }
+      .card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 1.25rem;
+        box-shadow: 0 12px 24px rgba(18, 61, 138, 0.06);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th, td {
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        padding: 0.85rem 0.6rem;
+        vertical-align: top;
+      }
+      th {
+        font-size: 0.9rem;
+        color: #59657a;
+      }
+      select, button {
+        padding: 0.6rem 0.8rem;
+        border-radius: 10px;
+        border: 1px solid #dfeaff;
+        font: inherit;
+      }
+      button {
+        background: #123d8a;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .status {
+        display: inline-block;
+        padding: 0.3rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: capitalize;
+      }
+      .pending { background: #fff7e6; color: #a85d00; }
+      .approved { background: #eaf7ee; color: #0f8a52; }
+      .rejected { background: #ffeaea; color: #c92c2c; }
+      .empty {
+        padding: 1rem 0;
+        color: #59657a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>AnyWork Helper Applications</h1>
+      <div class="card">
+        <div id="workerList">Loading applicants...</div>
+      </div>
+    </div>
+
+    <script>
+      const workerList = document.getElementById('workerList');
+
+      async function loadWorkers() {
+        try {
+          const response = await fetch('http://localhost:3001/api/career/workers');
+          const data = await response.json();
+          const workers = data.workers || [];
+
+          if (!workers.length) {
+            workerList.innerHTML = '<div class="empty">No helper registrations yet.</div>';
+            return;
+          }
+
+          workerList.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Service</th>
+                  <th>Notes</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${workers.map(worker => `
+                  <tr>
+                    <td>${worker.name}</td>
+                    <td>${worker.email}</td>
+                    <td>${worker.phone}</td>
+                    <td>${worker.service}</td>
+                    <td>${worker.details}</td>
+                    <td>
+                      <span class="status ${worker.status || 'pending'}">${worker.status || 'pending'}</span>
+                    </td>
+                    <td>
+                      <select data-id="${worker.id}">
+                        <option value="pending" ${worker.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="approved" ${worker.status === 'approved' ? 'selected' : ''}>Approved</option>
+                        <option value="rejected" ${worker.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                      </select>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+
+          document.querySelectorAll('select[data-id]').forEach((select) => {
+            select.addEventListener('change', async (event) => {
+              const id = event.target.getAttribute('data-id');
+              const status = event.target.value;
+
+              const updateResponse = await fetch(`http://localhost:3001/api/career/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+              });
+
+              const result = await updateResponse.json();
+              alert(result.message || 'Status updated');
+              loadWorkers();
+            });
+          });
+        } catch (error) {
+          workerList.innerHTML = '<div class="empty">Unable to load applicants.</div>';
+        }
+      }
+
+      loadWorkers();
+    </script>
+  </body>
+</html>

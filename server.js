@@ -10,7 +10,19 @@ const PORT = process.env.PORT || 3001;
 const resend = new Resend(process.env.RESEND_API_KEY);
 const workersFilePath = path.join(__dirname, 'data', 'workers.json');
 
+function ensureDataFile() {
+  const dir = path.dirname(workersFilePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  if (!fs.existsSync(workersFilePath)) {
+    fs.writeFileSync(workersFilePath, '[]');
+  }
+}
+
 function readWorkers() {
+  ensureDataFile();
   try {
     const raw = fs.readFileSync(workersFilePath, 'utf8');
     return JSON.parse(raw);
@@ -20,6 +32,7 @@ function readWorkers() {
 }
 
 function writeWorkers(workers) {
+  ensureDataFile();
   fs.writeFileSync(workersFilePath, JSON.stringify(workers, null, 2));
 }
 
@@ -41,6 +54,40 @@ app.get('/', (_req, res) => {
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, message: 'AnyWork email API is running.' });
+});
+
+app.get('/api/career/workers', (_req, res) => {
+  const workers = readWorkers();
+  return res.status(200).json({ workers });
+});
+
+app.put('/api/career/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body || {};
+
+  if (!['pending', 'approved', 'rejected'].includes(status)) {
+    return res.status(400).json({
+      message: 'Status must be one of: pending, approved, rejected.'
+    });
+  }
+
+  const workers = readWorkers();
+  const workerIndex = workers.findIndex((worker) => String(worker.id) === String(id));
+
+  if (workerIndex === -1) {
+    return res.status(404).json({
+      message: 'Worker not found.'
+    });
+  }
+
+  workers[workerIndex].status = status;
+  workers[workerIndex].updatedAt = new Date().toISOString();
+  writeWorkers(workers);
+
+  return res.status(200).json({
+    message: 'Worker status updated successfully.',
+    worker: workers[workerIndex]
+  });
 });
 
 app.post('/api/contact', async (req, res) => {
@@ -107,6 +154,7 @@ app.post('/api/career/register', (req, res) => {
     phone,
     service,
     details,
+    status: 'pending',
     createdAt: new Date().toISOString()
   };
 
