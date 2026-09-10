@@ -1,0 +1,19 @@
+{
+  "name": "anywork",
+  "version": "1.0.0",
+  "description": "AnyWork is a simple landing page for a local help and moving service website. It is designed to be hosted on GitHub Pages with no build tools required.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "nodemailer": "^10.0.3"
+  }
+}
