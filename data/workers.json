@@ -6,6 +6,8 @@
     "phone": "1112223333",
     "service": "Moving help",
     "details": "Available weekends and evenings.",
-    "createdAt": "2026-09-10T19:38:18.447Z"
+    "createdAt": "2026-09-10T19:38:18.447Z",
+    "status": "approved",
+    "updatedAt": "2026-09-10T19:48:13.717Z"
   }
 ]

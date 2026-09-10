@@ -55,18 +55,32 @@
       }
       .status {
         display: inline-block;
-        padding: 0.3rem 0.7rem;
+        padding: 0.35rem 0.8rem;
         border-radius: 999px;
         font-size: 0.8rem;
         font-weight: 700;
         text-transform: capitalize;
+        min-width: 88px;
+        text-align: center;
       }
       .pending { background: #fff7e6; color: #a85d00; }
       .approved { background: #eaf7ee; color: #0f8a52; }
       .rejected { background: #ffeaea; color: #c92c2c; }
+      .admin-summary {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        color: #59657a;
+      }
       .empty {
         padding: 1rem 0;
         color: #59657a;
+      }
+      select {
+        min-width: 120px;
+        border: 1px solid #cfe0ff;
+        background: white;
+        color: #18212f;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -74,18 +88,23 @@
     <div class="container">
       <h1>AnyWork Helper Applications</h1>
       <div class="card">
+        <div id="adminSummary" class="admin-summary">Loading applicants...</div>
         <div id="workerList">Loading applicants...</div>
       </div>
     </div>
 
     <script>
       const workerList = document.getElementById('workerList');
+      const adminSummary = document.getElementById('adminSummary');
+      const API_BASE_URL = window.ANYWORK_API_URL || 'https://anywork-opoe.onrender.com';
 
       async function loadWorkers() {
         try {
-          const response = await fetch('http://localhost:3001/api/career/workers');
+          const response = await fetch(`${API_BASE_URL}/api/career/workers?t=${Date.now()}`);
           const data = await response.json();
           const workers = data.workers || [];
+
+          adminSummary.textContent = `${workers.length} total applicant${workers.length === 1 ? '' : 's'}`;
 
           if (!workers.length) {
             workerList.innerHTML = '<div class="empty">No helper registrations yet.</div>';
@@ -134,7 +153,7 @@
               const id = event.target.getAttribute('data-id');
               const status = event.target.value;
 
-              const updateResponse = await fetch(`http://localhost:3001/api/career/${id}/status`, {
+              const updateResponse = await fetch(`${API_BASE_URL}/api/career/${id}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })

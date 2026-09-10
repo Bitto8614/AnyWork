@@ -39,6 +39,15 @@ function writeWorkers(workers) {
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+
+app.get('/admin', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin.html', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
 
 app.get('/', (_req, res) => {
   res.json({
