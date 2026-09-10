@@ -11,6 +11,17 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (_req, res) => {
+  res.json({
+    ok: true,
+    service: 'AnyWork email API',
+    endpoints: {
+      health: '/api/health',
+      contact: '/api/contact'
+    }
+  });
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, message: 'AnyWork email API is running.' });
 });
