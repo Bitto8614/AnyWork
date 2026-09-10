@@ -4,6 +4,28 @@ document.addEventListener("DOMContentLoaded", () => {
     yearNode.textContent = new Date().getFullYear();
   }
 
+  const carousel = document.querySelector(".moving-carousel");
+  if (carousel) {
+    const track = carousel.querySelector(".carousel-track");
+    const slides = [...carousel.querySelectorAll(".carousel-slide")];
+    const dots = [...carousel.querySelectorAll(".dot")];
+    let currentSlide = 0;
+
+    const showSlide = (index) => {
+      currentSlide = (index + slides.length) % slides.length;
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle("active", dotIndex === currentSlide);
+      });
+    };
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener("click", () => showSlide(index));
+    });
+
+    setInterval(() => showSlide(currentSlide + 1), 3500);
+  }
+
   const form = document.getElementById("contactForm");
   if (!form) return;
 
