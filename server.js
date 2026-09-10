@@ -3,10 +3,14 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const resend = new Resend(process.env.RESEND_API_KEY);
 const workersFilePath = path.join(__dirname, 'data', 'workers.json');
 
@@ -36,20 +40,68 @@ function writeWorkers(workers) {
   fs.writeFileSync(workersFilePath, JSON.stringify(workers, null, 2));
 }
 
+function requireAdmin(req, res, next) {
+  const authHeader = req.headers.authorization || '';
+  const expected = `Basic ${Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64')}`;
+
+  if (authHeader !== expected) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="AnyWork Admin"');
+    return res.status(401).json({ message: 'Unauthorized access.' });
+  }
+
+  return next();
+}
+
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use('/api', rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests. Please try again later.' }
+}));
 app.use(express.static(__dirname));
 
-app.get('/admin', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-app.get('/admin.html', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
 app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/about', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'about.html'));
+});
+
+app.get('/services', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'services.html'));
+});
+
+app.get('/careers', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'careers.html'));
+});
+
+app.get('/contact', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'contact.html'));
+});
+
+app.get('/privacy', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'privacy.html'));
+});
+
+app.get('/terms', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'terms.html'));
+});
+
+app.get('/admin', requireAdmin, (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin.html', requireAdmin, (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/api', (_req, res) => {
   res.json({
     ok: true,
     service: 'AnyWork email API',
@@ -65,12 +117,12 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, message: 'AnyWork email API is running.' });
 });
 
-app.get('/api/career/workers', (_req, res) => {
+app.get('/api/career/workers', requireAdmin, (_req, res) => {
   const workers = readWorkers();
   return res.status(200).json({ workers });
 });
 
-app.put('/api/career/:id/status', (req, res) => {
+app.put('/api/career/:id/status', requireAdmin, (req, res) => {
   const { id } = req.params;
   const { status } = req.body || {};
 

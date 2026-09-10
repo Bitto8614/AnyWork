@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact | AnyWork</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="/" class="brand"><img src="assets/logo.svg" alt="AnyWork logo" class="brand-logo" /><span>AnyWork</span></a>
+        <nav class="main-nav">
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+          <a href="/services">Services</a>
+          <a href="/careers">Careers</a>
+          <a href="/contact">Contact</a>
+        </nav>
+        <a href="/#contact" class="btn btn-primary">Book a Helper</a>
+      </div>
+    </header>
+
+    <main class="section contact">
+      <div class="container contact-wrap">
+        <div class="contact-copy">
+          <span class="eyebrow">Need help today?</span>
+          <h2>Let us help you settle in faster.</h2>
+          <p>Reach out for moving support, furniture setup, hotel room help, or cleanup requests.</p>
+          <div class="contact-direct" style="margin-top: 1.5rem; display: grid; gap: 0.7rem;">
+            <div><strong>Email:</strong> <a href="mailto:inaaya26032023@gmail.com">inaaya26032023@gmail.com</a></div>
+            <div><strong>Phone:</strong> <a href="tel:+12192763746">2192763746</a></div>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm">
+          <label>Full name<input type="text" name="name" required /></label>
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Service needed
+            <select name="service" required>
+              <option value="">Select a service</option>
+              <option>Moving help</option>
+              <option>Motel move-in support</option>
+              <option>Furniture setup</option>
+              <option>Packing & unpacking</option>
+            </select>
+          </label>
+          <label>Details<textarea name="details" rows="4" required></textarea></label>
+          <button type="submit" class="btn btn-primary">Send Request</button>
+        </form>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <div class="brand footer-brand"><img src="assets/logo.svg" alt="AnyWork logo" class="brand-logo" /><span>AnyWork</span></div>
+        <p>Helping people move smarter and settle in faster.</p>
+        <p>© <span id="year"></span> AnyWork.</p>
+      </div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
