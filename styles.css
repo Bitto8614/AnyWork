@@ -93,15 +93,20 @@ textarea {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0;
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--secondary);
 }
 
+.brand span {
+  display: none;
+}
+
 .brand-logo {
-  width: 42px;
-  height: 42px;
+  width: 120px;
+  height: auto;
+  display: block;
 }
 
 .main-nav {
