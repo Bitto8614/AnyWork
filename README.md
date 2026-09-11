@@ -1,6 +1,6 @@
-# AnyWork
+# AnyWork365
 
-AnyWork is a simple landing page for a local help and moving service website. It is designed to be hosted on GitHub Pages with no build tools required.
+AnyWork365 is a simple landing page for a local help and moving service website. It is designed to be hosted on GitHub Pages with no build tools required.
 
 ## Files
 
@@ -39,7 +39,7 @@ AnyWork is a simple landing page for a local help and moving service website. It
    - TO_EMAIL
    - FROM_EMAIL
 3. Confirm the app starts without errors.
-4. Verify your domain in Resend and set FROM_EMAIL to an email on that verified domain, such as hello@anywork.com.
+4. Verify your domain in Resend and set FROM_EMAIL to an email on that verified domain, such as hello@anywork365.com.
 5. Test the public API route and form submission on the live domain.
 6. Confirm the email is delivered to the target inbox.
 

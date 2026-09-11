@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AnyWork Admin</title>
+    <title>AnyWork365 Admin</title>
     <style>
       body {
         margin: 0;
@@ -117,7 +117,7 @@
   </head>
   <body>
     <div id="loginView" class="login-box">
-      <h2>AnyWork Admin Login</h2>
+      <h2>AnyWork365 Admin Login</h2>
       <div class="field">
         <label for="adminUsername">Username</label>
         <input id="adminUsername" type="text" placeholder="Enter username" value="anyworkadmin" />
@@ -131,7 +131,7 @@
     </div>
 
     <div id="adminView" class="container" style="display:none;">
-      <h1>AnyWork Helper Applications</h1>
+      <h1>AnyWork365 Helper Applications</h1>
       <div class="card">
         <div id="adminSummary" class="admin-summary">Loading applicants...</div>
         <div id="workerList">Loading applicants...</div>
@@ -184,6 +184,7 @@
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
+                  <th>Registering from</th>
                   <th>Service</th>
                   <th>Notes</th>
                   <th>Status</th>
@@ -196,6 +197,7 @@
                     <td>${worker.name}</td>
                     <td>${worker.email}</td>
                     <td>${worker.phone}</td>
+                    <td>${worker.registeringFrom || 'Not specified'}</td>
                     <td>${worker.service}</td>
                     <td>${worker.details}</td>
                     <td>

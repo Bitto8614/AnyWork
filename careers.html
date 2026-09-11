@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Careers | AnyWork</title>
+    <title>Careers | AnyWork365</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="container nav-wrap">
-        <a href="/" class="brand"><img src="assets/logo.svg" alt="AnyWork logo" class="brand-logo" /><span>AnyWork</span></a>
+        <a href="/" class="brand"><img src="assets/logo.svg" alt="AnyWork365 logo" class="brand-logo" /><span>AnyWork365</span></a>
         <nav class="main-nav">
           <a href="/">Home</a>
           <a href="/about">About</a>
@@ -25,7 +25,7 @@
       <div class="container contact-wrap">
         <div class="contact-copy">
           <span class="eyebrow">Join the team</span>
-          <h2>Register to become an AnyWork helper.</h2>
+          <h2>Register to become an AnyWork365 helper.</h2>
           <p>We are looking for reliable people who can help with moving, setup, cleanup, delivery, and hotel support work.</p>
           <ul class="check-list">
             <li>Flexible local work</li>
@@ -38,6 +38,14 @@
           <label>Full name<input type="text" name="name" required /></label>
           <label>Email<input type="email" name="email" required /></label>
           <label>Phone<input type="tel" name="phone" required /></label>
+          <label>Registering from
+            <select name="registeringFrom" required>
+              <option value="">Select where you are registering from</option>
+              <option>India</option>
+              <option>USA</option>
+              <option>Other</option>
+            </select>
+          </label>
           <label>Service type
             <select name="service" required>
               <option value="">Select a service</option>
@@ -57,9 +65,9 @@
 
     <footer class="site-footer">
       <div class="container footer-wrap">
-        <div class="brand footer-brand"><img src="assets/logo.svg" alt="AnyWork logo" class="brand-logo" /><span>AnyWork</span></div>
+        <div class="brand footer-brand"><img src="assets/logo.svg" alt="AnyWork365 logo" class="brand-logo" /><span>AnyWork365</span></div>
         <p>Helping people move smarter and settle in faster.</p>
-        <p>© <span id="year"></span> AnyWork.</p>
+        <p>© <span id="year"></span> AnyWork365.</p>
       </div>
     </footer>
     <script src="script.js"></script>

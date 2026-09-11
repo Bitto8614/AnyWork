@@ -45,7 +45,7 @@ function requireAdmin(req, res, next) {
   const expected = `Basic ${Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64')}`;
 
   if (authHeader !== expected) {
-    res.setHeader('WWW-Authenticate', 'Basic realm="AnyWork Admin"');
+    res.setHeader('WWW-Authenticate', 'Basic realm="AnyWork365 Admin"');
     return res.status(401).json({ message: 'Unauthorized access.' });
   }
 
@@ -135,7 +135,7 @@ app.get('/admin.html', requireAdmin, (_req, res) => {
 app.get('/api', (_req, res) => {
   res.json({
     ok: true,
-    service: 'AnyWork email API',
+    service: 'AnyWork365 email API',
     endpoints: {
       health: '/api/health',
       contact: '/api/contact',
@@ -145,7 +145,7 @@ app.get('/api', (_req, res) => {
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, message: 'AnyWork email API is running.' });
+  res.json({ ok: true, message: 'AnyWork365 email API is running.' });
 });
 
 app.get('/api/career/workers', requireAdmin, (_req, res) => {
@@ -203,10 +203,10 @@ app.post('/api/contact', async (req, res) => {
 
   try {
     const result = await resend.emails.send({
-      from: `AnyWork <${fromEmail}>`,
+      from: `AnyWork365 <${fromEmail}>`,
       to: [toEmail],
       reply_to: email,
-      subject: `AnyWork Booking Request: ${service}`,
+      subject: `AnyWork365 Booking Request: ${service}`,
       html: `
         <h2>New booking request</h2>
         <p><strong>Name:</strong> ${name}</p>
@@ -231,11 +231,11 @@ app.post('/api/contact', async (req, res) => {
 });
 
 app.post('/api/career/register', (req, res) => {
-  const { name, email, phone, service, details } = req.body || {};
+  const { name, email, phone, service, details, registeringFrom } = req.body || {};
 
-  if (!name || !email || !phone || !service || !details) {
+  if (!name || !email || !phone || !service || !details || !registeringFrom) {
     return res.status(400).json({
-      message: 'Please provide your name, email, phone, service, and experience details.'
+      message: 'Please provide your name, email, phone, service, registration location, and experience details.'
     });
   }
 
@@ -245,6 +245,7 @@ app.post('/api/career/register', (req, res) => {
     name,
     email,
     phone,
+    registeringFrom,
     service,
     details,
     status: 'pending',

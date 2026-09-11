@@ -74,53 +74,71 @@ textarea {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
-  backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 8px 22px rgba(18, 61, 138, 0.04);
+  z-index: 30;
+  background: rgba(6, 10, 16, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .nav-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 64px;
+  min-height: 72px;
   gap: 1rem;
 }
 
 .brand {
-  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--secondary);
-  min-width: 120px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 1.05rem;
+  font-weight: 900;
 }
 
-.brand span {
-  display: none;
-}
-
-.brand-logo {
-  width: 92px;
-  height: auto;
-  display: block;
-  transform: translateY(0);
+.brand-name {
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .main-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 1.05rem;
-  color: var(--muted);
-  font-weight: 600;
-  font-size: 0.92rem;
+  justify-content: flex-end;
+  gap: 1.1rem;
+  color: #f7f7f8;
+  font-weight: 700;
+  font-size: 0.95rem;
   flex: 1;
+}
+
+.main-nav a {
+  position: relative;
+  color: #ffffff;
+  opacity: 0.92;
+}
+
+.main-nav a:hover,
+.main-nav a:focus-visible {
+  opacity: 1;
+}
+
+.main-nav a::after {
+  display: none;
 }
 
 .main-nav a {
@@ -257,6 +275,109 @@ textarea {
 .dot.active {
   background: var(--primary);
   box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.2);
+}
+
+.urban-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 720px;
+  background: #efefef;
+  border-top: 1px solid rgba(17, 24, 39, 0.04);
+}
+
+.urban-visual-panel {
+  background: linear-gradient(90deg, rgba(255,255,255,0.96), rgba(241,244,247,0.86));
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.urban-image-wrap {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.urban-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.1) contrast(1.04);
+}
+
+.urban-copy-panel {
+  background: #121417;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 2.5rem;
+}
+
+.urban-copy {
+  width: min(100%, 560px);
+}
+
+.eyebrow-dark {
+  color: #dfe6f6;
+  letter-spacing: 0.14em;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 1.6rem;
+}
+
+.urban-copy h1 {
+  margin: 0 0 1.25rem;
+  font-size: clamp(2.4rem, 3vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.06em;
+  color: #fff;
+  max-width: 520px;
+}
+
+.urban-copy p {
+  margin: 0 0 2rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.5rem);
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+.city-select-wrap {
+  margin-top: 1.25rem;
+}
+
+.city-select-wrap label {
+  display: block;
+  margin-bottom: 0.9rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f6f7fb;
+}
+
+.select-shell {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.select-shell select {
+  width: 100%;
+  appearance: none;
+  border: none;
+  outline: none;
+  background: #fff;
+  color: #333;
+  padding: 1.20rem 1rem;
+  font-size: 1.1rem;
+  border-radius: 14px;
 }
 
 .hero {
