@@ -52,6 +52,25 @@ function requireAdmin(req, res, next) {
   return next();
 }
 
+async function sendAnyWorkEmail({ to, from, replyTo, subject, html }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = from || process.env.FROM_EMAIL || 'onboarding@resend.dev';
+
+  if (!apiKey) {
+    throw new Error('Email is not configured yet. Add RESEND_API_KEY to your .env file.');
+  }
+
+  const result = await resend.emails.send({
+    from: `AnyWork365 <${fromEmail}>`,
+    to: [to],
+    reply_to: replyTo,
+    subject,
+    html,
+  });
+
+  return result;
+}
+
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
@@ -191,21 +210,14 @@ app.post('/api/contact', async (req, res) => {
     });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.TO_EMAIL || 'ajeet.usa013@gmail.com';
   const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 
-  if (!apiKey) {
-    return res.status(500).json({
-      message: 'Email is not configured yet. Add RESEND_API_KEY to your .env file.'
-    });
-  }
-
   try {
-    const result = await resend.emails.send({
-      from: `AnyWork365 <${fromEmail}>`,
-      to: [toEmail],
-      reply_to: email,
+    const result = await sendAnyWorkEmail({
+      to: toEmail,
+      from: fromEmail,
+      replyTo: email,
       subject: `AnyWork365 Booking Request: ${service}`,
       html: `
         <h2>New booking request</h2>
@@ -224,13 +236,13 @@ app.post('/api/contact', async (req, res) => {
   } catch (error) {
     console.error('Email send failed:', error);
     return res.status(500).json({
-      message: 'Failed to send email.',
+      message: 'Email delivery failed. In Resend, the sender domain and the recipient address must be verified before emails can be delivered.',
       error: error.message,
     });
   }
 });
 
-app.post('/api/career/register', (req, res) => {
+app.post('/api/career/register', async (req, res) => {
   const { name, email, phone, service, details, registeringFrom } = req.body || {};
 
   if (!name || !email || !phone || !service || !details || !registeringFrom) {
@@ -255,10 +267,40 @@ app.post('/api/career/register', (req, res) => {
   workers.push(newEntry);
   writeWorkers(workers);
 
-  return res.status(200).json({
-    message: 'Registration saved successfully.',
-    worker: newEntry
-  });
+  const toEmail = process.env.TO_EMAIL || 'ajeet.usa013@gmail.com';
+  const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+
+  try {
+    const result = await sendAnyWorkEmail({
+      to: toEmail,
+      from: fromEmail,
+      replyTo: email,
+      subject: `AnyWork365 New Helper Registration: ${name}`,
+      html: `
+        <h2>New helper registration</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Registering from:</strong> ${registeringFrom}</p>
+        <p><strong>Service:</strong> ${service}</p>
+        <p><strong>Experience/details:</strong></p>
+        <p>${String(details).replace(/\n/g, '<br>')}</p>
+      `,
+    });
+
+    return res.status(200).json({
+      message: 'Registration saved successfully and email sent.',
+      worker: newEntry,
+      emailId: result?.id,
+    });
+  } catch (error) {
+    console.error('Career registration email failed:', error);
+    return res.status(200).json({
+      message: 'Registration saved successfully, but email delivery is still blocked by Resend verification settings.',
+      worker: newEntry,
+      warning: error.message,
+    });
+  }
 });
 
 app.listen(PORT, () => {
