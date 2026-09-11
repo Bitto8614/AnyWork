@@ -88,6 +88,10 @@ app.get('/services/:slug', (req, res) => {
   return res.sendFile(filePath);
 });
 
+app.get('/services/:slug/', (req, res) => {
+  return res.redirect(301, `/services/${req.params.slug}`);
+});
+
 app.get('/how-it-works', (_req, res) => {
   res.sendFile(path.join(__dirname, 'how-it-works.html'));
 });
