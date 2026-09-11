@@ -1,37 +1,36 @@
 <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bgGrad" x1="28" y1="22" x2="212" y2="214" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3A1837"/>
-      <stop offset="0.45" stop-color="#6B2E50"/>
-      <stop offset="1" stop-color="#B0626D"/>
+    <linearGradient id="bg" x1="18" y1="20" x2="220" y2="215" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A1224"/>
+      <stop offset="0.48" stop-color="#142D57"/>
+      <stop offset="1" stop-color="#1E5DA9"/>
     </linearGradient>
-    <linearGradient id="goldGrad" x1="80" y1="72" x2="160" y2="168" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F9E6B5"/>
-      <stop offset="1" stop-color="#D9A758"/>
+    <linearGradient id="gold" x1="66" y1="52" x2="178" y2="180" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBE8B5"/>
+      <stop offset="0.5" stop-color="#F1C666"/>
+      <stop offset="1" stop-color="#D5882A"/>
     </linearGradient>
-    <linearGradient id="softGrad" x1="70" y1="36" x2="166" y2="146" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FDEAE0"/>
-      <stop offset="1" stop-color="#F5D5C7"/>
+    <linearGradient id="glass" x1="80" y1="62" x2="176" y2="172" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FBFF"/>
+      <stop offset="1" stop-color="#DBE9FB"/>
     </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#050A17" flood-opacity="0.3"/>
+    </filter>
   </defs>
 
-  <rect x="12" y="12" width="216" height="216" rx="46" fill="url(#bgGrad)"/>
+  <rect x="12" y="12" width="216" height="216" rx="52" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="84" fill="rgba(255,255,255,0.03)"/>
 
-  <circle cx="120" cy="82" r="54" fill="url(#softGrad)" opacity="0.95"/>
-  <path d="M90 150C90 122.386 112.386 100 140 100H146C168.091 100 186 117.909 186 140V150H90V150Z" fill="#3A1837" opacity="0.18"/>
+  <g filter="url(#shadow)">
+    <path d="M67 155C67 124.072 92.072 99 123 99H135C165.928 99 191 124.072 191 155V156H67V155Z" fill="rgba(255,255,255,0.05)"/>
+    <path d="M62 142L120 54L178 142H152L120 91L88 142H62Z" fill="url(#gold)"/>
+    <path d="M91 143H149C156.732 143 163 149.268 163 157V161H77V157C77 149.268 83.268 143 91 143Z" fill="url(#glass)" opacity="0.9"/>
+    <path d="M109 108H131V143H109V108Z" fill="#0E1D38" opacity="0.18"/>
+    <path d="M89 158C98.8 171.4 108.2 178 120 178C131.8 178 141.2 171.4 151 158" stroke="#F7D98E" stroke-width="7" stroke-linecap="round"/>
+    <path d="M110 92C110 83.1634 117.163 76 126 76H126.5C135.337 76 142.5 83.1634 142.5 92V94H110V92Z" fill="#F7D98E"/>
+    <path d="M155 82L160.2 90.8L169.5 96L160.2 101.2L155 110L149.8 101.2L140.5 96L149.8 90.8L155 82Z" fill="#F7D98E"/>
+  </g>
 
-  <path d="M104 60C104 49.5063 112.506 41 123 41H127C137.494 41 146 49.5063 146 60V68C146 78.4937 137.494 87 127 87H123C112.506 87 104 78.4937 104 68V60Z" fill="#3A1837"/>
-
-  <path d="M88 95C88 69.595 108.595 49 134 49C155.539 49 174 66.4668 174 88V95C174 126.137 149.137 151 118 151H116C90.595 151 70 130.405 70 105V95H88Z" fill="url(#softGrad)"/>
-
-  <path d="M95 93C95 75.3269 109.327 61 127 61C142.55 61 155.369 72.0841 157.743 87.0404C158.965 80.3106 166.267 74 174 74C181.732 74 188 80.268 188 88C188 95.732 181.732 102 174 102C171.118 102 168.363 101.195 166.055 99.7598C162.34 108.958 154.008 115.5 144 115.5C133.749 115.5 124.734 109.981 120.316 101.912C118.186 103.992 115.144 105.2 111.8 105.2C104.855 105.2 99.2 99.5449 99.2 92.6C99.2 92.5921 99.2 92.5842 99.2001 92.5763C96.7145 93.1546 94.2724 94.2775 92 95.913V93H95Z" fill="#3A1837" opacity="0.88"/>
-
-  <path d="M100 131C100 120.507 108.507 112 119 112H147C157.493 112 166 120.507 166 131V141H100V131Z" fill="url(#goldGrad)"/>
-
-  <path d="M96 143C104.941 155.738 118.645 163.5 136 163.5C153.355 163.5 167.059 155.738 176 143H96Z" fill="#F7D8A6" opacity="0.9"/>
-
-  <circle cx="168" cy="62" r="6" fill="#FFD8A8"/>
-  <path d="M168 45V35M168 89V79M151 62H141M195 62H185M155.5 48.5L148.5 41.5M187.5 82.5L194.5 89.5M155.5 75.5L148.5 82.5M187.5 41.5L194.5 34.5" stroke="#F9E7C8" stroke-width="2.5" stroke-linecap="round"/>
-
-  <text x="120" y="206" text-anchor="middle" fill="#FCEFE7" font-family="'Georgia', 'Times New Roman', serif" font-size="26" font-weight="700" letter-spacing="3">INAAYA</text>
+  <text x="120" y="205" text-anchor="middle" fill="#F6FAFF" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="4">INAAYA</text>
 </svg>
