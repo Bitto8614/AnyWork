@@ -37,9 +37,13 @@ AnyWork is a simple landing page for a local help and moving service website. It
    - PORT
    - RESEND_API_KEY
    - TO_EMAIL
+   - FROM_EMAIL
 3. Confirm the app starts without errors.
-4. Test the public API route and form submission on the live domain.
-5. Confirm the email is delivered to the target inbox.
+4. Verify your domain in Resend and set FROM_EMAIL to an email on that verified domain, such as hello@anywork.com.
+5. Test the public API route and form submission on the live domain.
+6. Confirm the email is delivered to the target inbox.
+
+> Resend is in sandbox mode by default. Until your custom domain is verified, emails can only be sent to your own verified address.
 
 ## Local preview
 

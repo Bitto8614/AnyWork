@@ -192,7 +192,8 @@ app.post('/api/contact', async (req, res) => {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.TO_EMAIL || 'inaaya26032023@gmail.com';
+  const toEmail = process.env.TO_EMAIL || 'ajeet.usa013@gmail.com';
+  const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 
   if (!apiKey) {
     return res.status(500).json({
@@ -202,7 +203,7 @@ app.post('/api/contact', async (req, res) => {
 
   try {
     const result = await resend.emails.send({
-      from: 'AnyWork <onboarding@resend.dev>',
+      from: `AnyWork <${fromEmail}>`,
       to: [toEmail],
       reply_to: email,
       subject: `AnyWork Booking Request: ${service}`,

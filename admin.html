@@ -26,6 +26,44 @@
         padding: 1.25rem;
         box-shadow: 0 12px 24px rgba(18, 61, 138, 0.06);
       }
+      .login-box {
+        max-width: 420px;
+        margin: 3rem auto;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        box-shadow: 0 12px 24px rgba(18, 61, 138, 0.06);
+        padding: 2rem;
+      }
+      .login-box h2 {
+        margin-top: 0;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .field label {
+        font-weight: 700;
+        color: #2d3e5f;
+      }
+      input, select, button {
+        padding: 0.72rem 0.8rem;
+        border-radius: 10px;
+        border: 1px solid #dfeaff;
+        font: inherit;
+      }
+      input {
+        background: #f7fbff;
+      }
+      button {
+        background: #123d8a;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+      }
       table {
         width: 100%;
         border-collapse: collapse;
@@ -40,18 +78,6 @@
       th {
         font-size: 0.9rem;
         color: #59657a;
-      }
-      select, button {
-        padding: 0.6rem 0.8rem;
-        border-radius: 10px;
-        border: 1px solid #dfeaff;
-        font: inherit;
-      }
-      button {
-        background: #123d8a;
-        color: white;
-        border: none;
-        cursor: pointer;
       }
       .status {
         display: inline-block;
@@ -82,10 +108,29 @@
         color: #18212f;
         font-weight: 600;
       }
+      .error {
+        color: #b42318;
+        margin-top: 0.75rem;
+        min-height: 1.25rem;
+      }
     </style>
   </head>
   <body>
-    <div class="container">
+    <div id="loginView" class="login-box">
+      <h2>AnyWork Admin Login</h2>
+      <div class="field">
+        <label for="adminUsername">Username</label>
+        <input id="adminUsername" type="text" placeholder="Enter username" value="anyworkadmin" />
+      </div>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" type="password" placeholder="Enter password" value="AnyWork@2026!" />
+      </div>
+      <button id="loginButton" type="button">Login</button>
+      <div id="loginError" class="error"></div>
+    </div>
+
+    <div id="adminView" class="container" style="display:none;">
       <h1>AnyWork Helper Applications</h1>
       <div class="card">
         <div id="adminSummary" class="admin-summary">Loading applicants...</div>
@@ -94,13 +139,34 @@
     </div>
 
     <script>
+      const API_BASE_URL = window.ANYWORK_API_URL || window.location.origin;
+      const loginView = document.getElementById('loginView');
+      const adminView = document.getElementById('adminView');
+      const loginError = document.getElementById('loginError');
       const workerList = document.getElementById('workerList');
       const adminSummary = document.getElementById('adminSummary');
-      const API_BASE_URL = window.ANYWORK_API_URL || 'https://anywork-opoe.onrender.com';
+      const usernameInput = document.getElementById('adminUsername');
+      const passwordInput = document.getElementById('adminPassword');
+      const loginButton = document.getElementById('loginButton');
+      let adminUser = sessionStorage.getItem('anywork_admin_user') || 'anyworkadmin';
+      let adminPass = sessionStorage.getItem('anywork_admin_pass') || 'AnyWork@2026!';
 
-      async function loadWorkers() {
+      function getAuthHeader(user, pass) {
+        return 'Basic ' + btoa(`${user}:${pass}`);
+      }
+
+      async function fetchWorkers() {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/career/workers?t=${Date.now()}`);
+          const response = await fetch(`${API_BASE_URL}/api/career/workers?t=${Date.now()}`, {
+            headers: {
+              'Authorization': getAuthHeader(adminUser, adminPass)
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Unauthorized');
+          }
+
           const data = await response.json();
           const workers = data.workers || [];
 
@@ -155,21 +221,67 @@
 
               const updateResponse = await fetch(`${API_BASE_URL}/api/career/${id}/status`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                },
                 body: JSON.stringify({ status })
               });
 
               const result = await updateResponse.json();
               alert(result.message || 'Status updated');
-              loadWorkers();
+              fetchWorkers();
             });
           });
         } catch (error) {
-          workerList.innerHTML = '<div class="empty">Unable to load applicants.</div>';
+          loginView.style.display = 'block';
+          adminView.style.display = 'none';
+          loginError.textContent = 'Invalid username or password.';
         }
       }
 
-      loadWorkers();
+      function showAdminPanel() {
+        loginView.style.display = 'none';
+        adminView.style.display = 'block';
+        fetchWorkers();
+        clearInterval(window.anyworkRefreshTimer);
+        window.anyworkRefreshTimer = setInterval(fetchWorkers, 5000);
+      }
+
+      async function attemptLogin() {
+        adminUser = usernameInput.value.trim();
+        adminPass = passwordInput.value.trim();
+
+        if (!adminUser || !adminPass) {
+          loginError.textContent = 'Please enter both username and password.';
+          return;
+        }
+
+        sessionStorage.setItem('anywork_admin_user', adminUser);
+        sessionStorage.setItem('anywork_admin_pass', adminPass);
+
+        const testResponse = await fetch(`${API_BASE_URL}/api/career/workers?t=${Date.now()}`, {
+          headers: {
+            'Authorization': getAuthHeader(adminUser, adminPass)
+          }
+        });
+
+        if (testResponse.ok) {
+          showAdminPanel();
+        } else {
+          loginError.textContent = 'Invalid username or password.';
+        }
+      }
+
+      loginButton.addEventListener('click', attemptLogin);
+      usernameInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') attemptLogin();
+      });
+      passwordInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') attemptLogin();
+      });
+
+      showAdminPanel();
     </script>
   </body>
 </html>

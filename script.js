@@ -1,4 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const getApiBaseUrl = () => {
+    if (window.ANYWORK_API_URL) return window.ANYWORK_API_URL;
+
+    const isLocalHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    if (isLocalHost) {
+      return window.location.origin;
+    }
+
+    return "https://anywork-opoe.onrender.com";
+  };
+
   const yearNode = document.getElementById("year");
   if (yearNode) {
     yearNode.textContent = new Date().getFullYear();
@@ -28,9 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("contactForm");
   if (form) {
-    const API_BASE_URL =
-      window.ANYWORK_API_URL ||
-      "https://anywork-opoe.onrender.com";
+    const API_BASE_URL = getApiBaseUrl();
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -74,9 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const careerForm = document.getElementById("careerForm");
   if (careerForm) {
-    const API_BASE_URL =
-      window.ANYWORK_API_URL ||
-      "https://anywork-opoe.onrender.com";
+    const API_BASE_URL = getApiBaseUrl();
 
     careerForm.addEventListener("submit", async (event) => {
       event.preventDefault();
