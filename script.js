@@ -37,6 +37,34 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(() => showSlide(currentSlide + 1), 3500);
   }
 
+  const citySelect = document.getElementById("city-select");
+  const serviceGrid = document.getElementById("service-grid");
+  const servicesTitle = document.getElementById("services-title");
+  const servicesStatus = document.getElementById("services-status");
+
+  if (citySelect && serviceGrid && servicesTitle && servicesStatus) {
+    const defaultText = "Select your country and city";
+
+    const showServices = (city) => {
+      serviceGrid.classList.remove("service-grid-hidden");
+      servicesTitle.textContent = `Support in ${city}`;
+      servicesStatus.textContent = `Available services for ${city}. Book the right help for your location.`;
+      document.getElementById("services")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    citySelect.addEventListener("change", (event) => {
+      const selectedCity = event.target.value;
+      if (!selectedCity || selectedCity === defaultText) {
+        serviceGrid.classList.add("service-grid-hidden");
+        servicesTitle.textContent = "Support that makes moving easier.";
+        servicesStatus.textContent = "Select a city to view available services.";
+        return;
+      }
+
+      showServices(selectedCity);
+    });
+  }
+
   const form = document.getElementById("contactForm");
   if (form) {
     const API_BASE_URL = getApiBaseUrl();

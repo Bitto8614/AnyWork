@@ -655,6 +655,16 @@ textarea {
   letter-spacing: -0.05em;
 }
 
+.services-status {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.service-grid-hidden {
+  display: none;
+}
+
 .service-grid,
 .steps-grid,
 .review-grid,
