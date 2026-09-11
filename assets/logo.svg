@@ -1,21 +1,37 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="24" y1="18" x2="178" y2="182" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#5C3844"/>
-      <stop offset="1" stop-color="#4B2D38"/>
+    <linearGradient id="bgGrad" x1="28" y1="22" x2="212" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3A1837"/>
+      <stop offset="0.45" stop-color="#6B2E50"/>
+      <stop offset="1" stop-color="#B0626D"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="80" y1="72" x2="160" y2="168" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9E6B5"/>
+      <stop offset="1" stop-color="#D9A758"/>
+    </linearGradient>
+    <linearGradient id="softGrad" x1="70" y1="36" x2="166" y2="146" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDEAE0"/>
+      <stop offset="1" stop-color="#F5D5C7"/>
     </linearGradient>
   </defs>
 
-  <rect width="200" height="200" rx="36" fill="url(#bg)"/>
-  <circle cx="100" cy="72" r="42" fill="#F4E7DF"/>
+  <rect x="12" y="12" width="216" height="216" rx="46" fill="url(#bgGrad)"/>
 
-  <path d="M89 48C89 42.4772 93.4772 38 99 38H101C106.523 38 111 42.4772 111 48V75C111 80.5228 106.523 85 101 85H99C93.4772 85 89 80.5228 89 75V48Z" fill="#563642"/>
-  <path d="M96 86C90.4772 86 86 90.4772 86 96V112C86 116.418 89.582 120 94 120H104C108.418 120 112 116.418 112 112V96C112 90.4772 107.523 86 102 86H96Z" fill="#563642"/>
-  <path d="M75 101C75 92.1634 82.1634 85 91 85H109C117.837 85 125 92.1634 125 101V103C125 111.837 117.837 119 109 119H91C82.1634 119 75 111.837 75 103V101Z" fill="#563642"/>
-  <path d="M73 106C73 90.536 85.536 78 101 78C116.464 78 129 90.536 129 106V107.5C129 123.24 116.24 136 100.5 136H99.5C83.76 136 71 123.24 71 107.5V106H73Z" fill="#F4E7DF"/>
-  <path d="M93 102C93 96.4772 97.4772 92 103 92H110C115.523 92 120 96.4772 120 102V117H93V102Z" fill="#563642"/>
-  <path d="M82 99C82 95.134 85.134 92 89 92H91V117H82V99Z" fill="#563642"/>
-  <path d="M109 92H111C114.866 92 118 95.134 118 99V117H109V92Z" fill="#563642"/>
+  <circle cx="120" cy="82" r="54" fill="url(#softGrad)" opacity="0.95"/>
+  <path d="M90 150C90 122.386 112.386 100 140 100H146C168.091 100 186 117.909 186 140V150H90V150Z" fill="#3A1837" opacity="0.18"/>
 
-  <text x="100" y="167" text-anchor="middle" fill="#F4E7DF" font-family="Georgia, 'Times New Roman', serif" font-size="26" letter-spacing="3">INAAYA</text>
+  <path d="M104 60C104 49.5063 112.506 41 123 41H127C137.494 41 146 49.5063 146 60V68C146 78.4937 137.494 87 127 87H123C112.506 87 104 78.4937 104 68V60Z" fill="#3A1837"/>
+
+  <path d="M88 95C88 69.595 108.595 49 134 49C155.539 49 174 66.4668 174 88V95C174 126.137 149.137 151 118 151H116C90.595 151 70 130.405 70 105V95H88Z" fill="url(#softGrad)"/>
+
+  <path d="M95 93C95 75.3269 109.327 61 127 61C142.55 61 155.369 72.0841 157.743 87.0404C158.965 80.3106 166.267 74 174 74C181.732 74 188 80.268 188 88C188 95.732 181.732 102 174 102C171.118 102 168.363 101.195 166.055 99.7598C162.34 108.958 154.008 115.5 144 115.5C133.749 115.5 124.734 109.981 120.316 101.912C118.186 103.992 115.144 105.2 111.8 105.2C104.855 105.2 99.2 99.5449 99.2 92.6C99.2 92.5921 99.2 92.5842 99.2001 92.5763C96.7145 93.1546 94.2724 94.2775 92 95.913V93H95Z" fill="#3A1837" opacity="0.88"/>
+
+  <path d="M100 131C100 120.507 108.507 112 119 112H147C157.493 112 166 120.507 166 131V141H100V131Z" fill="url(#goldGrad)"/>
+
+  <path d="M96 143C104.941 155.738 118.645 163.5 136 163.5C153.355 163.5 167.059 155.738 176 143H96Z" fill="#F7D8A6" opacity="0.9"/>
+
+  <circle cx="168" cy="62" r="6" fill="#FFD8A8"/>
+  <path d="M168 45V35M168 89V79M151 62H141M195 62H185M155.5 48.5L148.5 41.5M187.5 82.5L194.5 89.5M155.5 75.5L148.5 82.5M187.5 41.5L194.5 34.5" stroke="#F9E7C8" stroke-width="2.5" stroke-linecap="round"/>
+
+  <text x="120" y="206" text-anchor="middle" fill="#FCEFE7" font-family="'Georgia', 'Times New Roman', serif" font-size="26" font-weight="700" letter-spacing="3">INAAYA</text>
 </svg>

@@ -1132,6 +1132,39 @@ blockquote {
     padding: 1.25rem;
   }
 
+  .urban-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .urban-visual-panel,
+  .urban-image-wrap {
+    min-height: 280px;
+  }
+
+  .urban-copy-panel {
+    padding: 2rem 1rem;
+  }
+
+  .urban-copy h1 {
+    font-size: clamp(2.1rem, 12vw, 3rem);
+  }
+
+  .urban-copy p {
+    font-size: 1rem;
+  }
+
+  .city-select-wrap label {
+    font-size: 0.98rem;
+  }
+
+  .select-shell select {
+    min-width: 0;
+    width: 100%;
+    padding: 0.95rem 0.8rem;
+    font-size: 0.96rem;
+  }
+
   .btn {
     width: 100%;
   }
