@@ -85,18 +85,20 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 62px;
-  gap: 1rem;
+  min-height: 72px;
+  gap: 1.2rem;
 }
 
 .brand {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0;
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--secondary);
+  min-width: 170px;
 }
 
 .brand span {
@@ -104,17 +106,21 @@ textarea {
 }
 
 .brand-logo {
-  width: 120px;
+  width: 136px;
   height: auto;
   display: block;
+  transform: translateY(2px);
 }
 
 .main-nav {
   display: flex;
-  gap: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
   color: var(--muted);
   font-weight: 600;
   font-size: 0.96rem;
+  flex: 1;
 }
 
 .main-nav a {
