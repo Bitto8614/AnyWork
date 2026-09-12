@@ -33,7 +33,8 @@ const DEFAULT_SERVICES = [
   { id: 11, slug: 'bartender-help', name: 'Bartender Help', description: 'Skilled bartenders for house parties, events, and private gatherings.', country: 'india', image: '', icon: '🍸', order: 11 },
   { id: 12, slug: 'nursing', name: 'Nursing', description: 'Qualified nurses for at-home care, injections, wound dressing, and elderly support.', country: 'india', image: '', icon: '🩹', order: 12 },
   { id: 13, slug: 'on-demand-doctors', name: 'On-Demand Doctors', description: 'Licensed doctors available for home visits, consultations, and urgent medical advice.', country: 'india', image: '', icon: '🩺', order: 13 },
-  { id: 14, slug: 'driver-help', name: 'Driver Help', description: 'Reliable drivers for vacations, road trips, hospital visits, and everyday errands.', country: 'india', image: '', icon: '🚖', order: 14 }
+  { id: 14, slug: 'driver-help', name: 'Driver Help', description: 'Reliable drivers for vacations, road trips, hospital visits, and everyday errands.', country: 'india', image: '', icon: '🚖', order: 14 },
+  { id: 15, slug: 'old-age-care', name: 'Old Age Care', description: 'Compassionate caregivers for elderly support, daily assistance, companionship, and medication reminders at home.', country: 'india', image: '', icon: '🧓', order: 15 }
 ];
 
 function ensureDir(dirPath) {
