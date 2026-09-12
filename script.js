@@ -38,10 +38,117 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(() => showSlide(currentSlide + 1), 4000 + Math.round(Math.random() * 800));
   });
 
+  const safeStorage = {
+    get(key, fallback) {
+      try {
+        return localStorage.getItem(key) || fallback;
+      } catch (error) {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (error) {
+        // Ignore - storage may be unavailable (file:// pages, private browsing, etc.)
+      }
+    }
+  };
+
+  const countrySelect = document.getElementById("country-currency-select");
+  const priceAmounts = document.querySelectorAll(".price-amount");
+  const storedCurrency = safeStorage.get("anywork_currency", "USD");
+
+  const applyCurrency = (currency) => {
+    priceAmounts.forEach((amountEl) => {
+      const value = currency === "INR" ? amountEl.dataset.inr : amountEl.dataset.usd;
+      if (!value) return;
+      const symbol = currency === "INR" ? "₹" : "$";
+      const locale = currency === "INR" ? "en-IN" : "en-US";
+      amountEl.textContent = `${symbol}${Number(value).toLocaleString(locale)}`;
+    });
+
+    safeStorage.set("anywork_currency", currency);
+  };
+
+  const applyCountryServices = (currency) => {
+    const cards = document.querySelectorAll("#service-grid .service-card-link[data-country]");
+    if (!cards.length) return;
+    const country = currency === "INR" ? "india" : "usa";
+    cards.forEach((card) => {
+      card.classList.toggle("service-card-hidden", card.dataset.country !== country);
+    });
+  };
+
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  }[char]));
+
+  const renderServiceCard = (service) => {
+    const media = service.image
+      ? `<img src="${escapeHtml(service.image)}" alt="${escapeHtml(service.name)}" />`
+      : `<div class="service-icon-block" aria-hidden="true">${escapeHtml(service.icon || "🔧")}</div>`;
+
+    return `
+      <a href="/services/${escapeHtml(service.slug)}" class="service-card-link" data-country="${escapeHtml(service.country)}">
+        <article class="service-card">
+          ${media}
+          <div class="service-card-content">
+            <h3>${escapeHtml(service.name)}</h3>
+            <p>${escapeHtml(service.description)}</p>
+            <span class="service-card-footer">Learn more</span>
+          </div>
+        </article>
+      </a>
+    `;
+  };
+
+  const loadServices = async (serviceGridEl) => {
+    if (!serviceGridEl) return;
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/api/services`);
+      if (!response.ok) throw new Error("Failed to load services");
+      const data = await response.json();
+      const services = Array.isArray(data.services) ? data.services : [];
+      serviceGridEl.innerHTML = services.map(renderServiceCard).join("");
+    } catch (error) {
+      serviceGridEl.innerHTML = `<p class="services-loading">Could not load services right now. Please refresh the page.</p>`;
+    } finally {
+      applyCountryServices(safeStorage.get("anywork_currency", "USD"));
+    }
+  };
+
+  const servicesCatalogGrid = document.getElementById("services-catalog-grid");
+  if (servicesCatalogGrid) {
+    loadServices(servicesCatalogGrid);
+  }
+
+  if (countrySelect) {
+    countrySelect.value = storedCurrency;
+    countrySelect.addEventListener("change", (event) => {
+      applyCurrency(event.target.value);
+      applyCountryServices(event.target.value);
+    });
+  }
+
+  if (priceAmounts.length) {
+    applyCurrency(storedCurrency);
+  }
+
+  applyCountryServices(storedCurrency);
+
   const citySelect = document.getElementById("city-select");
   const serviceGrid = document.getElementById("service-grid");
   const servicesTitle = document.getElementById("services-title");
   const servicesStatus = document.getElementById("services-status");
+
+  if (serviceGrid) {
+    loadServices(serviceGrid);
+  }
 
   if (citySelect && serviceGrid && servicesTitle && servicesStatus) {
     const defaultText = "Select your country and city";

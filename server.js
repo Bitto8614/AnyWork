@@ -15,7 +15,25 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const resend = new Resend(process.env.RESEND_API_KEY);
 const workersFilePath = path.join(__dirname, 'data', 'workers.json');
 const contactsFilePath = path.join(__dirname, 'data', 'contacts.json');
+const servicesFilePath = path.join(__dirname, 'data', 'services.json');
 const uploadsDir = path.join(__dirname, 'uploads', 'photo-ids');
+
+const DEFAULT_SERVICES = [
+  { id: 1, slug: 'moving-help', name: 'Moving Help', description: 'We provide reliable moving support for homes, apartments, and motel turnovers, including loading, carrying, and room-to-room setup.', country: 'usa', image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=900&q=80', icon: '', order: 1 },
+  { id: 2, slug: 'motel-move-in-support', name: 'Motel Move-In Support', description: 'We provide hotel front desk support, housekeeping help, and room-ready assistance for guests moving in or checking out quickly.', country: 'usa', image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80', icon: '', order: 2 },
+  { id: 3, slug: 'furniture-setup', name: 'Furniture Setup', description: 'We provide furniture assembly, placement, and room setup for beds, tables, shelves, and essential items in guest rooms or apartments.', country: 'usa', image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80', icon: '', order: 3 },
+  { id: 4, slug: 'plumbing', name: 'Plumbing', description: 'Leak fixes, tap and pipe repairs, and fixture installation from trusted local plumbers.', country: 'india', image: '', icon: '🔧', order: 4 },
+  { id: 5, slug: 'electrical-work', name: 'Electrical Work', description: 'Wiring fixes, outlet and light installs, and home electrical safety checks.', country: 'india', image: '', icon: '⚡', order: 5 },
+  { id: 6, slug: 'spa-massage', name: 'Spa & Massage', description: 'In-home spa and massage sessions to help you relax and recharge.', country: 'india', image: '', icon: '💆', order: 6 },
+  { id: 7, slug: 'haircut-salon', name: 'Haircut & Salon', description: 'Professional haircuts, styling, and grooming brought to your door.', country: 'india', image: '', icon: '💇', order: 7 },
+  { id: 8, slug: 'car-cleaning', name: 'Car Cleaning', description: 'Interior and exterior car cleaning at your home, apartment, or office.', country: 'india', image: '', icon: '🚗', order: 8 },
+  { id: 9, slug: 'home-cook', name: 'Home Cook', description: 'Home-style cooking help for daily meals, meal prep, or special occasions.', country: 'india', image: '', icon: '👨‍🍳', order: 9 },
+  { id: 10, slug: 'home-cleaning', name: 'Home Cleaner', description: 'Full home cleaning, tidying, and deep cleaning for a fresh, organized space.', country: 'india', image: '', icon: '🧹', order: 10 },
+  { id: 11, slug: 'bartender-help', name: 'Bartender Help', description: 'Skilled bartenders for house parties, events, and private gatherings.', country: 'india', image: '', icon: '🍸', order: 11 },
+  { id: 12, slug: 'nursing', name: 'Nursing', description: 'Qualified nurses for at-home care, injections, wound dressing, and elderly support.', country: 'india', image: '', icon: '🩹', order: 12 },
+  { id: 13, slug: 'on-demand-doctors', name: 'On-Demand Doctors', description: 'Licensed doctors available for home visits, consultations, and urgent medical advice.', country: 'india', image: '', icon: '🩺', order: 13 },
+  { id: 14, slug: 'driver-help', name: 'Driver Help', description: 'Reliable drivers for vacations, road trips, hospital visits, and everyday errands.', country: 'india', image: '', icon: '🚖', order: 14 }
+];
 
 function ensureDir(dirPath) {
   if (!fs.existsSync(dirPath)) {
@@ -84,6 +102,28 @@ function writeContacts(contacts) {
   writeJsonList(contactsFilePath, contacts);
 }
 
+function ensureServicesFile() {
+  ensureDir(path.dirname(servicesFilePath));
+  if (!fs.existsSync(servicesFilePath)) {
+    fs.writeFileSync(servicesFilePath, JSON.stringify(DEFAULT_SERVICES, null, 2));
+  }
+}
+
+function readServices() {
+  ensureServicesFile();
+  try {
+    const raw = fs.readFileSync(servicesFilePath, 'utf8');
+    return JSON.parse(raw);
+  } catch (error) {
+    return DEFAULT_SERVICES;
+  }
+}
+
+function writeServices(services) {
+  ensureServicesFile();
+  fs.writeFileSync(servicesFilePath, JSON.stringify(services, null, 2));
+}
+
 function requireAdmin(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const expected = `Basic ${Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64')}`;
@@ -136,7 +176,18 @@ app.use('/api', rateLimit({
   legacyHeaders: false,
   message: { message: 'Too many requests. Please try again later.' }
 }));
-app.use(express.static(__dirname));
+
+// These must be registered BEFORE express.static below, otherwise the static
+// middleware serves admin.html directly and the requireAdmin check never runs.
+app.get('/admin', requireAdmin, (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.get('/admin.html', requireAdmin, (_req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+app.use(express.static(__dirname, { index: 'index.html', redirect: false }));
 app.use('/uploads', requireAdmin, express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (_req, res) => {
@@ -198,14 +249,6 @@ app.get('/terms', (_req, res) => {
   res.sendFile(path.join(__dirname, 'terms.html'));
 });
 
-app.get('/admin', requireAdmin, (_req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
-app.get('/admin.html', requireAdmin, (_req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
 app.get('/api', (_req, res) => {
   res.json({
     ok: true,
@@ -220,6 +263,92 @@ app.get('/api', (_req, res) => {
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, message: 'AnyWork365 email API is running.' });
+});
+
+app.get('/api/services', (_req, res) => {
+  const services = readServices()
+    .slice()
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  return res.status(200).json({ services });
+});
+
+app.post('/api/admin/services', requireAdmin, (req, res) => {
+  const { slug, name, description, country, icon, image, order } = req.body || {};
+
+  if (!slug || !name || !description || !country) {
+    return res.status(400).json({ message: 'Please provide slug, name, description, and country.' });
+  }
+
+  if (!['usa', 'india'].includes(country)) {
+    return res.status(400).json({ message: 'Country must be either "usa" or "india".' });
+  }
+
+  const services = readServices();
+  if (services.some((service) => service.slug === slug)) {
+    return res.status(409).json({ message: 'A service with this slug already exists.' });
+  }
+
+  const newService = {
+    id: Date.now(),
+    slug: String(slug).trim(),
+    name: String(name).trim(),
+    description: String(description).trim(),
+    country,
+    icon: icon ? String(icon).trim() : '',
+    image: image ? String(image).trim() : '',
+    order: Number.isFinite(Number(order)) ? Number(order) : services.length + 1,
+    createdAt: new Date().toISOString()
+  };
+
+  services.push(newService);
+  writeServices(services);
+
+  return res.status(201).json({ message: 'Service added.', service: newService });
+});
+
+app.put('/api/admin/services/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const services = readServices();
+  const index = services.findIndex((service) => String(service.id) === String(id));
+
+  if (index === -1) {
+    return res.status(404).json({ message: 'Service not found.' });
+  }
+
+  const { slug, name, description, country, icon, image, order } = req.body || {};
+
+  if (country && !['usa', 'india'].includes(country)) {
+    return res.status(400).json({ message: 'Country must be either "usa" or "india".' });
+  }
+
+  services[index] = {
+    ...services[index],
+    ...(slug !== undefined ? { slug: String(slug).trim() } : {}),
+    ...(name !== undefined ? { name: String(name).trim() } : {}),
+    ...(description !== undefined ? { description: String(description).trim() } : {}),
+    ...(country !== undefined ? { country } : {}),
+    ...(icon !== undefined ? { icon: String(icon).trim() } : {}),
+    ...(image !== undefined ? { image: String(image).trim() } : {}),
+    ...(order !== undefined && Number.isFinite(Number(order)) ? { order: Number(order) } : {}),
+    updatedAt: new Date().toISOString()
+  };
+
+  writeServices(services);
+
+  return res.status(200).json({ message: 'Service updated.', service: services[index] });
+});
+
+app.delete('/api/admin/services/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const services = readServices();
+  const nextServices = services.filter((service) => String(service.id) !== String(id));
+
+  if (nextServices.length === services.length) {
+    return res.status(404).json({ message: 'Service not found.' });
+  }
+
+  writeServices(nextServices);
+  return res.status(200).json({ message: 'Service deleted.' });
 });
 
 app.get('/api/career/workers', requireAdmin, (_req, res) => {

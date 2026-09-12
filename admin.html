@@ -143,11 +143,11 @@
       <h2>AnyWork365 Admin Login</h2>
       <div class="field">
         <label for="adminUsername">Username</label>
-        <input id="adminUsername" type="text" placeholder="Enter username" value="anyworkadmin" />
+        <input id="adminUsername" type="text" placeholder="Enter username" autocomplete="username" />
       </div>
       <div class="field">
         <label for="adminPassword">Password</label>
-        <input id="adminPassword" type="password" placeholder="Enter password" value="AnyWork@2026!" />
+        <input id="adminPassword" type="password" placeholder="Enter password" autocomplete="current-password" />
       </div>
       <button id="loginButton" type="button">Login</button>
       <div id="loginError" class="error"></div>
@@ -158,6 +158,7 @@
       <div class="tabs">
         <button type="button" class="tab-btn active" id="tabContacts">Contact Requests</button>
         <button type="button" class="tab-btn" id="tabWorkers">Helper Applications</button>
+        <button type="button" class="tab-btn" id="tabServices">Manage Services</button>
       </div>
 
       <div id="contactsPanel" class="card">
@@ -168,6 +169,26 @@
       <div id="workersPanel" class="card" style="display:none;">
         <div id="adminSummary" class="admin-summary">Loading applicants...</div>
         <div id="workerList">Loading applicants...</div>
+      </div>
+
+      <div id="servicesPanel" class="card" style="display:none;">
+        <div id="servicesSummary" class="admin-summary">Loading services...</div>
+        <div id="serviceList">Loading services...</div>
+        <h3>Add a service</h3>
+        <form id="addServiceForm" class="admin-form">
+          <input id="newServiceName" type="text" placeholder="Name" required />
+          <input id="newServiceSlug" type="text" placeholder="Slug (e.g. plumbing)" required />
+          <select id="newServiceCountry" required>
+            <option value="usa">USA</option>
+            <option value="india">India</option>
+          </select>
+          <input id="newServiceIcon" type="text" placeholder="Icon (emoji, optional)" />
+          <input id="newServiceImage" type="text" placeholder="Image URL (optional)" />
+          <input id="newServiceOrder" type="number" placeholder="Order" />
+          <textarea id="newServiceDescription" placeholder="Description" required></textarea>
+          <button type="submit">Add Service</button>
+          <div id="addServiceError" class="error"></div>
+        </form>
       </div>
     </div>
 
@@ -185,25 +206,43 @@
       const loginButton = document.getElementById('loginButton');
       const tabContacts = document.getElementById('tabContacts');
       const tabWorkers = document.getElementById('tabWorkers');
+      const tabServices = document.getElementById('tabServices');
       const contactsPanel = document.getElementById('contactsPanel');
       const workersPanel = document.getElementById('workersPanel');
-      let adminUser = sessionStorage.getItem('anywork_admin_user') || 'anyworkadmin';
-      let adminPass = sessionStorage.getItem('anywork_admin_pass') || 'AnyWork@2026!';
+      const servicesPanel = document.getElementById('servicesPanel');
+      const serviceList = document.getElementById('serviceList');
+      const servicesSummary = document.getElementById('servicesSummary');
+      const addServiceForm = document.getElementById('addServiceForm');
+      const addServiceError = document.getElementById('addServiceError');
+      let adminUser = sessionStorage.getItem('anywork_admin_user') || '';
+      let adminPass = sessionStorage.getItem('anywork_admin_pass') || '';
 
       function getAuthHeader(user, pass) {
         return 'Basic ' + btoa(`${user}:${pass}`);
       }
 
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[char]));
+      }
+
       function showTab(tab) {
-        const isContacts = tab === 'contacts';
-        tabContacts.classList.toggle('active', isContacts);
-        tabWorkers.classList.toggle('active', !isContacts);
-        contactsPanel.style.display = isContacts ? 'block' : 'none';
-        workersPanel.style.display = isContacts ? 'none' : 'block';
+        tabContacts.classList.toggle('active', tab === 'contacts');
+        tabWorkers.classList.toggle('active', tab === 'workers');
+        tabServices.classList.toggle('active', tab === 'services');
+        contactsPanel.style.display = tab === 'contacts' ? 'block' : 'none';
+        workersPanel.style.display = tab === 'workers' ? 'block' : 'none';
+        servicesPanel.style.display = tab === 'services' ? 'block' : 'none';
       }
 
       tabContacts.addEventListener('click', () => showTab('contacts'));
       tabWorkers.addEventListener('click', () => showTab('workers'));
+      tabServices.addEventListener('click', () => showTab('services'));
 
       async function fetchContacts() {
         try {
@@ -423,12 +462,161 @@
         }
       }
 
+      async function fetchServices() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/services?t=${Date.now()}`, {
+            headers: {
+              'Authorization': getAuthHeader(adminUser, adminPass)
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Unauthorized');
+          }
+
+          const data = await response.json();
+          const services = (data.services || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+
+          servicesSummary.textContent = `${services.length} total service${services.length === 1 ? '' : 's'}`;
+
+          if (!services.length) {
+            serviceList.innerHTML = '<div class="empty">No services yet.</div>';
+            return;
+          }
+
+          serviceList.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Name</th>
+                  <th>Slug</th>
+                  <th>Country</th>
+                  <th>Description</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${services.map(service => `
+                  <tr>
+                    <td><input type="number" class="service-order-input" data-service-id="${service.id}" value="${service.order || 0}" /></td>
+                    <td>${escapeHtml(service.name)}</td>
+                    <td>${escapeHtml(service.slug)}</td>
+                    <td>
+                      <select data-service-country-id="${service.id}">
+                        <option value="usa" ${service.country === 'usa' ? 'selected' : ''}>USA</option>
+                        <option value="india" ${service.country === 'india' ? 'selected' : ''}>India</option>
+                      </select>
+                    </td>
+                    <td>${escapeHtml(service.description)}</td>
+                    <td>
+                      <button type="button" class="delete-btn" data-delete-service-id="${service.id}">Delete</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+
+          async function updateService(id, payload) {
+            const updateResponse = await fetch(`${API_BASE_URL}/api/admin/services/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getAuthHeader(adminUser, adminPass)
+              },
+              body: JSON.stringify(payload)
+            });
+            const result = await updateResponse.json();
+            if (!updateResponse.ok) {
+              alert(result.message || 'Could not update service.');
+            }
+            fetchServices();
+          }
+
+          document.querySelectorAll('.service-order-input').forEach((input) => {
+            input.addEventListener('change', (event) => {
+              const id = event.target.getAttribute('data-service-id');
+              updateService(id, { order: Number(event.target.value) });
+            });
+          });
+
+          document.querySelectorAll('select[data-service-country-id]').forEach((select) => {
+            select.addEventListener('change', (event) => {
+              const id = event.target.getAttribute('data-service-country-id');
+              updateService(id, { country: event.target.value });
+            });
+          });
+
+          document.querySelectorAll('button[data-delete-service-id]').forEach((button) => {
+            button.addEventListener('click', async (event) => {
+              const id = event.target.getAttribute('data-delete-service-id');
+              if (!confirm('Delete this service?')) return;
+
+              const deleteResponse = await fetch(`${API_BASE_URL}/api/admin/services/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                }
+              });
+
+              const result = await deleteResponse.json();
+              alert(result.message || 'Deleted');
+              fetchServices();
+            });
+          });
+        } catch (error) {
+          loginView.style.display = 'block';
+          adminView.style.display = 'none';
+          loginError.textContent = 'Invalid username or password.';
+        }
+      }
+
+      addServiceForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        addServiceError.textContent = '';
+
+        const payload = {
+          name: document.getElementById('newServiceName').value.trim(),
+          slug: document.getElementById('newServiceSlug').value.trim(),
+          country: document.getElementById('newServiceCountry').value,
+          icon: document.getElementById('newServiceIcon').value.trim(),
+          image: document.getElementById('newServiceImage').value.trim(),
+          order: Number(document.getElementById('newServiceOrder').value) || undefined,
+          description: document.getElementById('newServiceDescription').value.trim()
+        };
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/admin/services`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': getAuthHeader(adminUser, adminPass)
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            addServiceError.textContent = result.message || 'Could not add service.';
+            return;
+          }
+
+          addServiceForm.reset();
+          fetchServices();
+        } catch (error) {
+          addServiceError.textContent = 'Something went wrong. Please try again.';
+        }
+      });
+
       function showAdminPanel() {
         loginView.style.display = 'none';
         adminView.style.display = 'block';
         showTab('contacts');
         fetchContacts();
         fetchWorkers();
+        fetchServices();
         clearInterval(window.anyworkRefreshTimer);
         window.anyworkRefreshTimer = setInterval(() => {
           fetchContacts();
@@ -469,7 +657,22 @@
         if (event.key === 'Enter') attemptLogin();
       });
 
-      showAdminPanel();
+      async function tryStoredSession() {
+        if (!adminUser || !adminPass) return;
+
+        const testResponse = await fetch(`${API_BASE_URL}/api/career/workers?t=${Date.now()}`, {
+          headers: { 'Authorization': getAuthHeader(adminUser, adminPass) }
+        });
+
+        if (testResponse.ok) {
+          showAdminPanel();
+        } else {
+          sessionStorage.removeItem('anywork_admin_user');
+          sessionStorage.removeItem('anywork_admin_pass');
+        }
+      }
+
+      tryStoredSession();
     </script>
   </body>
 </html>
