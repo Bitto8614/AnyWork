@@ -284,12 +284,12 @@
               <tbody>
                 ${contacts.map(contact => `
                   <tr>
-                    <td>${contact.name}</td>
-                    <td>${contact.email}</td>
-                    <td>${contact.phone || 'Not provided'}</td>
-                    <td>${contact.service}</td>
-                    <td>${contact.hoursNeeded || 'Not specified'}</td>
-                    <td>${contact.details}</td>
+                    <td>${escapeHtml(contact.name)}</td>
+                    <td>${escapeHtml(contact.email)}</td>
+                    <td>${escapeHtml(contact.phone) || 'Not provided'}</td>
+                    <td>${escapeHtml(contact.service)}</td>
+                    <td>${escapeHtml(contact.hoursNeeded) || 'Not specified'}</td>
+                    <td>${escapeHtml(contact.details)}</td>
                     <td>${new Date(contact.createdAt).toLocaleString()}</td>
                     <td>
                       <span class="status ${contact.status || 'new'}">${contact.status || 'new'}</span>
@@ -393,14 +393,14 @@
               <tbody>
                 ${workers.map(worker => `
                   <tr>
-                    <td>${worker.name}</td>
-                    <td>${worker.email}</td>
-                    <td>${worker.phone}</td>
-                    <td>${worker.city || 'Not provided'}</td>
-                    <td>${worker.registeringFrom || 'Not specified'}</td>
-                    <td>${worker.service}</td>
-                    <td>${worker.details}</td>
-                    <td>${worker.photoId ? `<a href="${API_BASE_URL}/uploads/photo-ids/${worker.photoId}" target="_blank" rel="noopener">View</a>` : 'Not provided'}</td>
+                    <td>${escapeHtml(worker.name)}</td>
+                    <td>${escapeHtml(worker.email)}</td>
+                    <td>${escapeHtml(worker.phone)}</td>
+                    <td>${escapeHtml(worker.city) || 'Not provided'}</td>
+                    <td>${escapeHtml(worker.registeringFrom) || 'Not specified'}</td>
+                    <td>${escapeHtml(worker.service)}</td>
+                    <td>${escapeHtml(worker.details)}</td>
+                    <td>${worker.photoId ? `<a href="${API_BASE_URL}/uploads/photo-ids/${encodeURIComponent(worker.photoId)}" target="_blank" rel="noopener">View</a>` : 'Not provided'}</td>
                     <td>
                       <span class="status ${worker.status || 'pending'}">${worker.status || 'pending'}</span>
                     </td>

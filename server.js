@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const multer = require('multer');
@@ -41,6 +42,23 @@ function ensureDir(dirPath) {
   }
 }
 
+const ALLOWED_UPLOAD_MIME_TYPES = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'application/pdf': '.pdf'
+};
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
 function ensureDataFile(filePath) {
   ensureDir(path.dirname(filePath));
 
@@ -56,14 +74,13 @@ const photoIdUpload = multer({
       cb(null, uploadsDir);
     },
     filename: (_req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase();
+      const ext = ALLOWED_UPLOAD_MIME_TYPES[file.mimetype] || '';
       cb(null, `${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`);
     }
   }),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-    if (allowed.includes(file.mimetype)) {
+    if (ALLOWED_UPLOAD_MIME_TYPES[file.mimetype]) {
       cb(null, true);
     } else {
       cb(new Error('Photo ID must be a JPG, PNG, WEBP, or PDF file.'));
@@ -128,7 +145,12 @@ function requireAdmin(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const expected = `Basic ${Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64')}`;
 
-  if (authHeader !== expected) {
+  const providedBuffer = Buffer.from(authHeader);
+  const expectedBuffer = Buffer.from(expected);
+  const isMatch = providedBuffer.length === expectedBuffer.length &&
+    crypto.timingSafeEqual(providedBuffer, expectedBuffer);
+
+  if (!isMatch) {
     res.setHeader('WWW-Authenticate', 'Basic realm="AnyWork365 Admin"');
     return res.status(401).json({ message: 'Unauthorized access.' });
   }
@@ -166,7 +188,10 @@ async function sendAnyWorkEmail({ to, from, replyTo, subject, html }) {
 }
 
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: ['https://anywork365.com', 'https://www.anywork365.com', 'http://localhost:8000', 'http://127.0.0.1:8000'],
+  credentials: true
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/api', rateLimit({
@@ -204,9 +229,15 @@ app.get('/services', (_req, res) => {
 
 app.get('/services/:slug', (req, res) => {
   const { slug } = req.params;
-  const filePath = path.join(__dirname, 'services', `${slug}.html`);
 
-  if (!fs.existsSync(filePath)) {
+  if (!/^[a-z0-9-]+$/i.test(slug)) {
+    return res.status(404).send('Service page not found.');
+  }
+
+  const servicesDir = path.join(__dirname, 'services');
+  const filePath = path.join(servicesDir, `${slug}.html`);
+
+  if (!filePath.startsWith(servicesDir + path.sep) || !fs.existsSync(filePath)) {
     return res.status(404).send('Service page not found.');
   }
 
@@ -478,13 +509,13 @@ app.post('/api/contact', async (req, res) => {
       subject: `AnyWork365 Booking Request: ${service}`,
       html: `
         <h2>New booking request</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Service:</strong> ${service}</p>
-        <p><strong>Hours needed:</strong> ${hoursNeeded}</p>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
+        <p><strong>Service:</strong> ${escapeHtml(service)}</p>
+        <p><strong>Hours needed:</strong> ${escapeHtml(hoursNeeded)}</p>
         <p><strong>Details:</strong></p>
-        <p>${String(details).replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(details).replace(/\n/g, '<br>')}</p>
       `,
     });
 
@@ -548,15 +579,15 @@ app.post('/api/career/register', (req, res, next) => {
       subject: `AnyWork365 New Helper Registration: ${name}`,
       html: `
         <h2>New helper registration</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>City:</strong> ${city}</p>
-        <p><strong>Registering from:</strong> ${registeringFrom}</p>
-        <p><strong>Service:</strong> ${service}</p>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
+        <p><strong>City:</strong> ${escapeHtml(city)}</p>
+        <p><strong>Registering from:</strong> ${escapeHtml(registeringFrom)}</p>
+        <p><strong>Service:</strong> ${escapeHtml(service)}</p>
         <p><strong>Photo ID submitted:</strong> ${newEntry.photoId ? 'Yes' : 'No'}</p>
         <p><strong>Experience/details:</strong></p>
-        <p>${String(details).replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(details).replace(/\n/g, '<br>')}</p>
       `,
     });
 
