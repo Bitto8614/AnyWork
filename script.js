@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const selectedCity = event.target.value;
       if (!selectedCity || selectedCity === defaultText) {
         serviceGrid.classList.add("service-grid-hidden");
-        servicesTitle.textContent = "Support that makes moving easier.";
+        servicesTitle.textContent = "Everyday home & lifestyle services, all in one place.";
         servicesStatus.textContent = "Select a city to view available services.";
         return;
       }
