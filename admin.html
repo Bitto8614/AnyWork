@@ -89,9 +89,9 @@
         min-width: 88px;
         text-align: center;
       }
-      .pending { background: #fff7e6; color: #a85d00; }
-      .approved { background: #eaf7ee; color: #0f8a52; }
-      .rejected { background: #ffeaea; color: #c92c2c; }
+      .pending, .new { background: #fff7e6; color: #a85d00; }
+      .approved, .contacted { background: #eaf7ee; color: #0f8a52; }
+      .rejected, .closed { background: #ffeaea; color: #c92c2c; }
       .admin-summary {
         margin-bottom: 1rem;
         font-size: 1rem;
@@ -113,6 +113,29 @@
         margin-top: 0.75rem;
         min-height: 1.25rem;
       }
+      .tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .tab-btn {
+        background: white;
+        color: #123d8a;
+        border: 1px solid #cfe0ff;
+        font-weight: 700;
+      }
+      .tab-btn.active {
+        background: #123d8a;
+        color: white;
+      }
+      .delete-btn {
+        background: #ffeaea;
+        color: #c92c2c;
+        border: 1px solid #ffd0d0;
+        font-weight: 700;
+        padding: 0.4rem 0.7rem;
+        margin-left: 0.4rem;
+      }
     </style>
   </head>
   <body>
@@ -131,8 +154,18 @@
     </div>
 
     <div id="adminView" class="container" style="display:none;">
-      <h1>AnyWork365 Helper Applications</h1>
-      <div class="card">
+      <h1>AnyWork365 Admin Dashboard</h1>
+      <div class="tabs">
+        <button type="button" class="tab-btn active" id="tabContacts">Contact Requests</button>
+        <button type="button" class="tab-btn" id="tabWorkers">Helper Applications</button>
+      </div>
+
+      <div id="contactsPanel" class="card">
+        <div id="contactsSummary" class="admin-summary">Loading requests...</div>
+        <div id="contactList">Loading requests...</div>
+      </div>
+
+      <div id="workersPanel" class="card" style="display:none;">
         <div id="adminSummary" class="admin-summary">Loading applicants...</div>
         <div id="workerList">Loading applicants...</div>
       </div>
@@ -145,14 +178,135 @@
       const loginError = document.getElementById('loginError');
       const workerList = document.getElementById('workerList');
       const adminSummary = document.getElementById('adminSummary');
+      const contactList = document.getElementById('contactList');
+      const contactsSummary = document.getElementById('contactsSummary');
       const usernameInput = document.getElementById('adminUsername');
       const passwordInput = document.getElementById('adminPassword');
       const loginButton = document.getElementById('loginButton');
+      const tabContacts = document.getElementById('tabContacts');
+      const tabWorkers = document.getElementById('tabWorkers');
+      const contactsPanel = document.getElementById('contactsPanel');
+      const workersPanel = document.getElementById('workersPanel');
       let adminUser = sessionStorage.getItem('anywork_admin_user') || 'anyworkadmin';
       let adminPass = sessionStorage.getItem('anywork_admin_pass') || 'AnyWork@2026!';
 
       function getAuthHeader(user, pass) {
         return 'Basic ' + btoa(`${user}:${pass}`);
+      }
+
+      function showTab(tab) {
+        const isContacts = tab === 'contacts';
+        tabContacts.classList.toggle('active', isContacts);
+        tabWorkers.classList.toggle('active', !isContacts);
+        contactsPanel.style.display = isContacts ? 'block' : 'none';
+        workersPanel.style.display = isContacts ? 'none' : 'block';
+      }
+
+      tabContacts.addEventListener('click', () => showTab('contacts'));
+      tabWorkers.addEventListener('click', () => showTab('workers'));
+
+      async function fetchContacts() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/contact/list?t=${Date.now()}`, {
+            headers: {
+              'Authorization': getAuthHeader(adminUser, adminPass)
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Unauthorized');
+          }
+
+          const data = await response.json();
+          const contacts = (data.contacts || []).slice().reverse();
+
+          contactsSummary.textContent = `${contacts.length} total request${contacts.length === 1 ? '' : 's'}`;
+
+          if (!contacts.length) {
+            contactList.innerHTML = '<div class="empty">No contact requests yet.</div>';
+            return;
+          }
+
+          contactList.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Service</th>
+                  <th>Details</th>
+                  <th>Received</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${contacts.map(contact => `
+                  <tr>
+                    <td>${contact.name}</td>
+                    <td>${contact.email}</td>
+                    <td>${contact.service}</td>
+                    <td>${contact.details}</td>
+                    <td>${new Date(contact.createdAt).toLocaleString()}</td>
+                    <td>
+                      <span class="status ${contact.status || 'new'}">${contact.status || 'new'}</span>
+                    </td>
+                    <td>
+                      <select data-contact-id="${contact.id}">
+                        <option value="new" ${contact.status === 'new' ? 'selected' : ''}>New</option>
+                        <option value="contacted" ${contact.status === 'contacted' ? 'selected' : ''}>Contacted</option>
+                        <option value="closed" ${contact.status === 'closed' ? 'selected' : ''}>Closed</option>
+                      </select>
+                      <button type="button" class="delete-btn" data-delete-contact-id="${contact.id}">Delete</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+
+          document.querySelectorAll('select[data-contact-id]').forEach((select) => {
+            select.addEventListener('change', async (event) => {
+              const id = event.target.getAttribute('data-contact-id');
+              const status = event.target.value;
+
+              const updateResponse = await fetch(`${API_BASE_URL}/api/contact/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                },
+                body: JSON.stringify({ status })
+              });
+
+              const result = await updateResponse.json();
+              alert(result.message || 'Status updated');
+              fetchContacts();
+            });
+          });
+
+          document.querySelectorAll('button[data-delete-contact-id]').forEach((button) => {
+            button.addEventListener('click', async (event) => {
+              const id = event.target.getAttribute('data-delete-contact-id');
+              if (!confirm('Delete this contact request?')) return;
+
+              const deleteResponse = await fetch(`${API_BASE_URL}/api/contact/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                }
+              });
+
+              const result = await deleteResponse.json();
+              alert(result.message || 'Deleted');
+              fetchContacts();
+            });
+          });
+        } catch (error) {
+          loginView.style.display = 'block';
+          adminView.style.display = 'none';
+          loginError.textContent = 'Invalid username or password.';
+        }
       }
 
       async function fetchWorkers() {
@@ -209,6 +363,7 @@
                         <option value="approved" ${worker.status === 'approved' ? 'selected' : ''}>Approved</option>
                         <option value="rejected" ${worker.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                       </select>
+                      <button type="button" class="delete-btn" data-delete-worker-id="${worker.id}">Delete</button>
                     </td>
                   </tr>
                 `).join('')}
@@ -235,6 +390,24 @@
               fetchWorkers();
             });
           });
+
+          document.querySelectorAll('button[data-delete-worker-id]').forEach((button) => {
+            button.addEventListener('click', async (event) => {
+              const id = event.target.getAttribute('data-delete-worker-id');
+              if (!confirm('Delete this helper application?')) return;
+
+              const deleteResponse = await fetch(`${API_BASE_URL}/api/career/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                }
+              });
+
+              const result = await deleteResponse.json();
+              alert(result.message || 'Deleted');
+              fetchWorkers();
+            });
+          });
         } catch (error) {
           loginView.style.display = 'block';
           adminView.style.display = 'none';
@@ -245,9 +418,14 @@
       function showAdminPanel() {
         loginView.style.display = 'none';
         adminView.style.display = 'block';
+        showTab('contacts');
+        fetchContacts();
         fetchWorkers();
         clearInterval(window.anyworkRefreshTimer);
-        window.anyworkRefreshTimer = setInterval(fetchWorkers, 5000);
+        window.anyworkRefreshTimer = setInterval(() => {
+          fetchContacts();
+          fetchWorkers();
+        }, 5000);
       }
 
       async function attemptLogin() {

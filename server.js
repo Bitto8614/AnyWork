@@ -13,31 +13,48 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const resend = new Resend(process.env.RESEND_API_KEY);
 const workersFilePath = path.join(__dirname, 'data', 'workers.json');
+const contactsFilePath = path.join(__dirname, 'data', 'contacts.json');
 
-function ensureDataFile() {
-  const dir = path.dirname(workersFilePath);
+function ensureDataFile(filePath) {
+  const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  if (!fs.existsSync(workersFilePath)) {
-    fs.writeFileSync(workersFilePath, '[]');
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '[]');
   }
 }
 
-function readWorkers() {
-  ensureDataFile();
+function readJsonList(filePath) {
+  ensureDataFile(filePath);
   try {
-    const raw = fs.readFileSync(workersFilePath, 'utf8');
+    const raw = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(raw);
   } catch (error) {
     return [];
   }
 }
 
+function writeJsonList(filePath, list) {
+  ensureDataFile(filePath);
+  fs.writeFileSync(filePath, JSON.stringify(list, null, 2));
+}
+
+function readWorkers() {
+  return readJsonList(workersFilePath);
+}
+
 function writeWorkers(workers) {
-  ensureDataFile();
-  fs.writeFileSync(workersFilePath, JSON.stringify(workers, null, 2));
+  writeJsonList(workersFilePath, workers);
+}
+
+function readContacts() {
+  return readJsonList(contactsFilePath);
+}
+
+function writeContacts(contacts) {
+  writeJsonList(contactsFilePath, contacts);
 }
 
 function requireAdmin(req, res, next) {
@@ -211,6 +228,64 @@ app.put('/api/career/:id/status', requireAdmin, (req, res) => {
   });
 });
 
+app.delete('/api/career/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const workers = readWorkers();
+  const nextWorkers = workers.filter((worker) => String(worker.id) !== String(id));
+
+  if (nextWorkers.length === workers.length) {
+    return res.status(404).json({ message: 'Worker not found.' });
+  }
+
+  writeWorkers(nextWorkers);
+  return res.status(200).json({ message: 'Worker deleted successfully.' });
+});
+
+app.get('/api/contact/list', requireAdmin, (_req, res) => {
+  const contacts = readContacts();
+  return res.status(200).json({ contacts });
+});
+
+app.put('/api/contact/:id/status', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body || {};
+
+  if (!['new', 'contacted', 'closed'].includes(status)) {
+    return res.status(400).json({
+      message: 'Status must be one of: new, contacted, closed.'
+    });
+  }
+
+  const contacts = readContacts();
+  const contactIndex = contacts.findIndex((contact) => String(contact.id) === String(id));
+
+  if (contactIndex === -1) {
+    return res.status(404).json({ message: 'Request not found.' });
+  }
+
+  contacts[contactIndex].status = status;
+  contacts[contactIndex].updatedAt = new Date().toISOString();
+  writeContacts(contacts);
+
+  return res.status(200).json({
+    message: 'Request status updated successfully.',
+    contact: contacts[contactIndex]
+  });
+});
+
+app.delete('/api/contact/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const contacts = readContacts();
+  const nextContacts = contacts.filter((contact) => String(contact.id) !== String(id));
+
+  if (nextContacts.length === contacts.length) {
+    return res.status(404).json({ message: 'Request not found.' });
+  }
+
+  writeContacts(nextContacts);
+  return res.status(200).json({ message: 'Request deleted successfully.' });
+});
+
 app.post('/api/contact', async (req, res) => {
   const { name, email, service, details } = req.body || {};
 
@@ -219,6 +294,19 @@ app.post('/api/contact', async (req, res) => {
       message: 'Please provide your name, email, service, and project details.'
     });
   }
+
+  const contacts = readContacts();
+  const newContact = {
+    id: Date.now(),
+    name,
+    email,
+    service,
+    details,
+    status: 'new',
+    createdAt: new Date().toISOString()
+  };
+  contacts.push(newContact);
+  writeContacts(contacts);
 
   const toEmail = process.env.TO_EMAIL || 'ajeet.usa013@gmail.com';
   const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev';
@@ -242,12 +330,14 @@ app.post('/api/contact', async (req, res) => {
     return res.status(200).json({
       message: 'Request sent successfully.',
       id: result?.id,
+      contact: newContact,
     });
   } catch (error) {
     console.error('Email send failed:', error);
     return res.status(500).json({
       message: error.message || 'Email delivery failed. In Resend, the sender domain and the recipient address must be verified before emails can be delivered.',
       error: error.message,
+      contact: newContact,
     });
   }
 });
