@@ -209,11 +209,13 @@ textarea {
   box-shadow: 0 14px 24px rgba(18, 61, 138, 0.1);
 }
 
-.moving-carousel-section {
+.moving-carousel-section,
+.carousel-section {
   padding: 0.25rem 0 0;
 }
 
-.moving-carousel {
+.moving-carousel,
+.carousel {
   position: relative;
   overflow: hidden;
   border-radius: 28px;
@@ -251,6 +253,38 @@ textarea {
   border-radius: 999px;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.carousel-testimonials {
+  background: linear-gradient(135deg, rgba(18, 61, 138, 0.08), rgba(255, 122, 24, 0.1));
+}
+
+.carousel-testimonials .carousel-slide {
+  min-height: 240px;
+  padding: 3rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.1rem;
+}
+
+.carousel-testimonials blockquote {
+  margin: 0;
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--dark, #18212f);
+}
+
+.carousel-testimonials .testimonial-author {
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.carousel-testimonials .testimonial-author span {
+  display: block;
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .carousel-dots {

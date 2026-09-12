@@ -34,10 +34,11 @@
           </ul>
         </div>
 
-        <form class="contact-form" id="careerForm">
+        <form class="contact-form" id="careerForm" enctype="multipart/form-data">
           <label>Full name<input type="text" name="name" required /></label>
           <label>Email<input type="email" name="email" required /></label>
           <label>Phone<input type="tel" name="phone" required /></label>
+          <label>City you live in<input type="text" name="city" placeholder="e.g. Chicago" required /></label>
           <label>Registering from
             <select name="registeringFrom" required>
               <option value="">Select where you are registering from</option>
@@ -66,6 +67,7 @@
             </select>
           </label>
           <label>Experience / details<textarea name="details" rows="4" required></textarea></label>
+          <label>Photo ID (optional)<input type="file" name="photoId" accept="image/png,image/jpeg,image/webp,application/pdf" /></label>
           <button type="submit" class="btn btn-primary">Register Now</button>
         </form>
       </div>

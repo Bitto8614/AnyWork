@@ -15,11 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
     yearNode.textContent = new Date().getFullYear();
   }
 
-  const carousel = document.querySelector(".moving-carousel");
-  if (carousel) {
+  const carousels = document.querySelectorAll(".carousel");
+  carousels.forEach((carousel) => {
     const track = carousel.querySelector(".carousel-track");
     const slides = [...carousel.querySelectorAll(".carousel-slide")];
     const dots = [...carousel.querySelectorAll(".dot")];
+    if (!track || slides.length < 2) return;
     let currentSlide = 0;
 
     const showSlide = (index) => {
@@ -34,8 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
       dot.addEventListener("click", () => showSlide(index));
     });
 
-    setInterval(() => showSlide(currentSlide + 1), 3500);
-  }
+    setInterval(() => showSlide(currentSlide + 1), 4000 + Math.round(Math.random() * 800));
+  });
 
   const citySelect = document.getElementById("city-select");
   const serviceGrid = document.getElementById("service-grid");
@@ -119,7 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const button = careerForm.querySelector("button[type='submit']");
       const originalText = button.textContent;
       const formData = new FormData(careerForm);
-      const payload = Object.fromEntries(formData.entries());
 
       button.disabled = true;
       button.textContent = "Registering...";
@@ -127,10 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/career/register`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+          body: formData,
         });
 
         const data = await response.json();

@@ -114,6 +114,35 @@
         </div>
       </section>
 
+      <section class="carousel-section container">
+        <div class="carousel carousel-photos">
+          <div class="carousel-track">
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=80" alt="Service professional ready to help" />
+              <div class="carousel-caption">Trusted help, every time</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80" alt="Helper loading moving boxes" />
+              <div class="carousel-caption">Moving day, made easy</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80" alt="Housekeeping staff preparing a room" />
+              <div class="carousel-caption">Room-ready in minutes</div>
+            </div>
+            <div class="carousel-slide">
+              <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80" alt="Furniture assembly in progress" />
+              <div class="carousel-caption">Furniture set up fast</div>
+            </div>
+          </div>
+          <div class="carousel-dots">
+            <button class="dot active" aria-label="Slide 1"></button>
+            <button class="dot" aria-label="Slide 2"></button>
+            <button class="dot" aria-label="Slide 3"></button>
+            <button class="dot" aria-label="Slide 4"></button>
+          </div>
+        </div>
+      </section>
+
       <section class="section page-links-section">
         <div class="container">
           <div class="section-heading">
@@ -304,11 +333,25 @@
           </div>
 
           <div class="feature-panel">
-            <div class="panel-box">
-              <p>“I booked help to move my things into a motel room and it saved me hours. The helper arrived on time and made everything easy.”</p>
-              <div class="panel-author">
-                <strong>Melissa K.</strong>
-                <span>Traveler</span>
+            <div class="carousel carousel-testimonials">
+              <div class="carousel-track">
+                <div class="carousel-slide">
+                  <blockquote>"I booked help to move my things into a motel room and it saved me hours. The helper arrived on time and made everything easy."</blockquote>
+                  <div class="testimonial-author">Melissa K.<span>Traveler</span></div>
+                </div>
+                <div class="carousel-slide">
+                  <blockquote>"The plumber fixed our leak within the hour. Fast, professional, and worth every penny."</blockquote>
+                  <div class="testimonial-author">Rohan S.<span>Homeowner</span></div>
+                </div>
+                <div class="carousel-slide">
+                  <blockquote>"Booked a home-cooked dinner during a busy week and it was a lifesaver. Highly recommend AnyWork365."</blockquote>
+                  <div class="testimonial-author">Priya M.<span>Busy parent</span></div>
+                </div>
+              </div>
+              <div class="carousel-dots">
+                <button class="dot active" aria-label="Testimonial 1"></button>
+                <button class="dot" aria-label="Testimonial 2"></button>
+                <button class="dot" aria-label="Testimonial 3"></button>
               </div>
             </div>
           </div>
@@ -443,6 +486,10 @@
               <input type="email" name="email" placeholder="you@example.com" required />
             </label>
             <label>
+              Phone
+              <input type="tel" name="phone" placeholder="Your phone number" required />
+            </label>
+            <label>
               Service needed
               <select name="service" required>
                 <option value="">Select a service</option>
@@ -458,6 +505,17 @@
                 <option>Home cook</option>
                 <option>Home cleaning</option>
                 <option>Bartender help</option>
+              </select>
+            </label>
+            <label>
+              How many hours do you need help for?
+              <select name="hoursNeeded" required>
+                <option value="">Select duration</option>
+                <option>1-2 hours</option>
+                <option>3-5 hours</option>
+                <option>Half day (6 hours)</option>
+                <option>Full day (8+ hours)</option>
+                <option>Multi-day project</option>
               </select>
             </label>
             <label>

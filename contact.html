@@ -36,6 +36,7 @@
         <form class="contact-form" id="contactForm">
           <label>Full name<input type="text" name="name" required /></label>
           <label>Email<input type="email" name="email" required /></label>
+          <label>Phone<input type="tel" name="phone" required /></label>
           <label>Service needed
             <select name="service" required>
               <option value="">Select a service</option>
@@ -51,6 +52,16 @@
               <option>Home cook</option>
               <option>Home cleaning</option>
               <option>Bartender help</option>
+            </select>
+          </label>
+          <label>How many hours do you need help for?
+            <select name="hoursNeeded" required>
+              <option value="">Select duration</option>
+              <option>1-2 hours</option>
+              <option>3-5 hours</option>
+              <option>Half day (6 hours)</option>
+              <option>Full day (8+ hours)</option>
+              <option>Multi-day project</option>
             </select>
           </label>
           <label>Details<textarea name="details" rows="4" required></textarea></label>
