@@ -246,7 +246,7 @@ app.post('/api/contact', async (req, res) => {
   } catch (error) {
     console.error('Email send failed:', error);
     return res.status(500).json({
-      message: 'Email delivery failed. In Resend, the sender domain and the recipient address must be verified before emails can be delivered.',
+      message: error.message || 'Email delivery failed. In Resend, the sender domain and the recipient address must be verified before emails can be delivered.',
       error: error.message,
     });
   }
