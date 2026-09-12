@@ -68,7 +68,17 @@ async function sendAnyWorkEmail({ to, from, replyTo, subject, html }) {
     html,
   });
 
-  return result;
+  // The Resend SDK does NOT throw on API-level failures (invalid sender,
+  // unverified domain, bad recipient, etc). It returns { data, error }.
+  // Without this check, every send looked like a "success" even when
+  // Resend silently rejected it, which is why emails never arrived.
+  if (result?.error) {
+    console.error('Resend rejected the email:', JSON.stringify(result.error));
+    throw new Error(result.error.message || 'Resend rejected the email.');
+  }
+
+  console.log('Resend accepted the email:', JSON.stringify(result?.data));
+  return result?.data;
 }
 
 app.use(helmet({ contentSecurityPolicy: false }));
