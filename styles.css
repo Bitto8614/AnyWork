@@ -419,13 +419,19 @@ textarea {
 .select-shell select {
   width: 100%;
   appearance: none;
+  -webkit-appearance: none;
   border: none;
   outline: none;
   background: #fff;
   color: #333;
-  padding: 1.20rem 1rem;
+  padding: 1.20rem 2.75rem 1.20rem 1rem;
   font-size: 1.1rem;
   border-radius: 14px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2rem;
 }
 
 .hero {
