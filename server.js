@@ -17,6 +17,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const workersFilePath = path.join(__dirname, 'data', 'workers.json');
 const contactsFilePath = path.join(__dirname, 'data', 'contacts.json');
 const servicesFilePath = path.join(__dirname, 'data', 'services.json');
+const showcaseFilePath = path.join(__dirname, 'data', 'showcase.json');
 const uploadsDir = path.join(__dirname, 'uploads', 'photo-ids');
 
 const DEFAULT_SERVICES = [
@@ -140,6 +141,31 @@ function readServices() {
 function writeServices(services) {
   ensureServicesFile();
   fs.writeFileSync(servicesFilePath, JSON.stringify(services, null, 2));
+}
+
+// Showcase entries are added manually by the admin (real helpers who agreed
+// to be featured). There is no default/seed data here on purpose — we never
+// want to display fabricated people, photos, or ratings as if they were real.
+function ensureShowcaseFile() {
+  ensureDir(path.dirname(showcaseFilePath));
+  if (!fs.existsSync(showcaseFilePath)) {
+    fs.writeFileSync(showcaseFilePath, '[]');
+  }
+}
+
+function readShowcase() {
+  ensureShowcaseFile();
+  try {
+    const raw = fs.readFileSync(showcaseFilePath, 'utf8');
+    return JSON.parse(raw);
+  } catch (error) {
+    return [];
+  }
+}
+
+function writeShowcase(entries) {
+  ensureShowcaseFile();
+  fs.writeFileSync(showcaseFilePath, JSON.stringify(entries, null, 2));
 }
 
 function requireAdmin(req, res, next) {
@@ -381,6 +407,88 @@ app.delete('/api/admin/services/:id', requireAdmin, (req, res) => {
 
   writeServices(nextServices);
   return res.status(200).json({ message: 'Service deleted.' });
+});
+
+app.get('/api/showcase', (_req, res) => {
+  const showcase = readShowcase().slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+  return res.status(200).json({ showcase });
+});
+
+app.post('/api/admin/showcase', requireAdmin, (req, res) => {
+  const { name, role, blurb, rating, photo, order } = req.body || {};
+
+  if (!name || !role || !blurb || !photo) {
+    return res.status(400).json({ message: 'Please provide name, role, blurb, and a photo URL.' });
+  }
+
+  const ratingNumber = Number(rating);
+  if (!Number.isFinite(ratingNumber) || ratingNumber < 1 || ratingNumber > 5) {
+    return res.status(400).json({ message: 'Rating must be a number between 1 and 5.' });
+  }
+
+  const showcase = readShowcase();
+  const newEntry = {
+    id: Date.now(),
+    name: String(name).trim(),
+    role: String(role).trim(),
+    blurb: String(blurb).trim(),
+    rating: ratingNumber,
+    photo: String(photo).trim(),
+    order: Number.isFinite(Number(order)) ? Number(order) : showcase.length + 1,
+    createdAt: new Date().toISOString()
+  };
+
+  showcase.push(newEntry);
+  writeShowcase(showcase);
+
+  return res.status(201).json({ message: 'Showcase entry added.', entry: newEntry });
+});
+
+app.put('/api/admin/showcase/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const showcase = readShowcase();
+  const index = showcase.findIndex((entry) => String(entry.id) === String(id));
+
+  if (index === -1) {
+    return res.status(404).json({ message: 'Showcase entry not found.' });
+  }
+
+  const { name, role, blurb, rating, photo, order } = req.body || {};
+
+  if (rating !== undefined) {
+    const ratingNumber = Number(rating);
+    if (!Number.isFinite(ratingNumber) || ratingNumber < 1 || ratingNumber > 5) {
+      return res.status(400).json({ message: 'Rating must be a number between 1 and 5.' });
+    }
+  }
+
+  showcase[index] = {
+    ...showcase[index],
+    ...(name !== undefined ? { name: String(name).trim() } : {}),
+    ...(role !== undefined ? { role: String(role).trim() } : {}),
+    ...(blurb !== undefined ? { blurb: String(blurb).trim() } : {}),
+    ...(rating !== undefined ? { rating: Number(rating) } : {}),
+    ...(photo !== undefined ? { photo: String(photo).trim() } : {}),
+    ...(order !== undefined && Number.isFinite(Number(order)) ? { order: Number(order) } : {}),
+    updatedAt: new Date().toISOString()
+  };
+
+  writeShowcase(showcase);
+
+  return res.status(200).json({ message: 'Showcase entry updated.', entry: showcase[index] });
+});
+
+app.delete('/api/admin/showcase/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const showcase = readShowcase();
+  const nextShowcase = showcase.filter((entry) => String(entry.id) !== String(id));
+
+  if (nextShowcase.length === showcase.length) {
+    return res.status(404).json({ message: 'Showcase entry not found.' });
+  }
+
+  writeShowcase(nextShowcase);
+  return res.status(200).json({ message: 'Showcase entry deleted.' });
 });
 
 app.get('/api/career/workers', requireAdmin, (_req, res) => {

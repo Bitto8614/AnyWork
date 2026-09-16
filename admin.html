@@ -160,6 +160,7 @@
         <button type="button" class="tab-btn active" id="tabContacts">Contact Requests</button>
         <button type="button" class="tab-btn" id="tabWorkers">Helper Applications</button>
         <button type="button" class="tab-btn" id="tabServices">Manage Services</button>
+        <button type="button" class="tab-btn" id="tabShowcase">Worker Showcase</button>
       </div>
 
       <div id="contactsPanel" class="card">
@@ -191,6 +192,29 @@
           <div id="addServiceError" class="error"></div>
         </form>
       </div>
+
+      <div id="showcasePanel" class="card" style="display:none;">
+        <p style="color:#59657a; margin-top:0;">Only add real helpers who have agreed to be featured publicly with their photo, name, and a rating. Do not add placeholder or fabricated people.</p>
+        <div id="showcaseSummary" class="admin-summary">Loading showcase...</div>
+        <div id="showcaseListEl">Loading showcase...</div>
+        <h3>Add a showcase entry</h3>
+        <form id="addShowcaseForm" class="admin-form">
+          <input id="newShowcaseName" type="text" placeholder="Name" required />
+          <input id="newShowcaseRole" type="text" placeholder="Role (e.g. Plumbing helper)" required />
+          <select id="newShowcaseRating" required>
+            <option value="5">5 stars</option>
+            <option value="4">4 stars</option>
+            <option value="3">3 stars</option>
+            <option value="2">2 stars</option>
+            <option value="1">1 star</option>
+          </select>
+          <input id="newShowcasePhoto" type="text" placeholder="Photo URL (with their consent)" required />
+          <input id="newShowcaseOrder" type="number" placeholder="Order" />
+          <textarea id="newShowcaseBlurb" placeholder="Short blurb / customer feedback" required></textarea>
+          <button type="submit">Add Showcase Entry</button>
+          <div id="addShowcaseError" class="error"></div>
+        </form>
+      </div>
     </div>
 
     <script>
@@ -208,13 +232,19 @@
       const tabContacts = document.getElementById('tabContacts');
       const tabWorkers = document.getElementById('tabWorkers');
       const tabServices = document.getElementById('tabServices');
+      const tabShowcase = document.getElementById('tabShowcase');
       const contactsPanel = document.getElementById('contactsPanel');
       const workersPanel = document.getElementById('workersPanel');
       const servicesPanel = document.getElementById('servicesPanel');
+      const showcasePanel = document.getElementById('showcasePanel');
       const serviceList = document.getElementById('serviceList');
       const servicesSummary = document.getElementById('servicesSummary');
       const addServiceForm = document.getElementById('addServiceForm');
       const addServiceError = document.getElementById('addServiceError');
+      const showcaseListEl = document.getElementById('showcaseListEl');
+      const showcaseSummary = document.getElementById('showcaseSummary');
+      const addShowcaseForm = document.getElementById('addShowcaseForm');
+      const addShowcaseError = document.getElementById('addShowcaseError');
       let adminUser = sessionStorage.getItem('anywork_admin_user') || '';
       let adminPass = sessionStorage.getItem('anywork_admin_pass') || '';
 
@@ -236,14 +266,17 @@
         tabContacts.classList.toggle('active', tab === 'contacts');
         tabWorkers.classList.toggle('active', tab === 'workers');
         tabServices.classList.toggle('active', tab === 'services');
+        tabShowcase.classList.toggle('active', tab === 'showcase');
         contactsPanel.style.display = tab === 'contacts' ? 'block' : 'none';
         workersPanel.style.display = tab === 'workers' ? 'block' : 'none';
         servicesPanel.style.display = tab === 'services' ? 'block' : 'none';
+        showcasePanel.style.display = tab === 'showcase' ? 'block' : 'none';
       }
 
       tabContacts.addEventListener('click', () => showTab('contacts'));
       tabWorkers.addEventListener('click', () => showTab('workers'));
       tabServices.addEventListener('click', () => showTab('services'));
+      tabShowcase.addEventListener('click', () => showTab('showcase'));
 
       async function fetchContacts() {
         try {
@@ -611,6 +644,139 @@
         }
       });
 
+      async function fetchShowcase() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/showcase?t=${Date.now()}`, {
+            headers: {
+              'Authorization': getAuthHeader(adminUser, adminPass)
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Unauthorized');
+          }
+
+          const data = await response.json();
+          const showcase = (data.showcase || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0));
+
+          showcaseSummary.textContent = `${showcase.length} total showcase entr${showcase.length === 1 ? 'y' : 'ies'}`;
+
+          if (!showcase.length) {
+            showcaseListEl.innerHTML = '<div class="empty">No showcase entries yet.</div>';
+            return;
+          }
+
+          showcaseListEl.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Order</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Rating</th>
+                  <th>Blurb</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${showcase.map(entry => `
+                  <tr>
+                    <td><img src="${escapeHtml(entry.photo)}" alt="${escapeHtml(entry.name)}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;" /></td>
+                    <td><input type="number" class="showcase-order-input" data-showcase-id="${entry.id}" value="${entry.order || 0}" /></td>
+                    <td>${escapeHtml(entry.name)}</td>
+                    <td>${escapeHtml(entry.role)}</td>
+                    <td>${escapeHtml(entry.rating)} / 5</td>
+                    <td>${escapeHtml(entry.blurb)}</td>
+                    <td>
+                      <button type="button" class="delete-btn" data-delete-showcase-id="${entry.id}">Delete</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+
+          document.querySelectorAll('.showcase-order-input').forEach((input) => {
+            input.addEventListener('change', async (event) => {
+              const id = event.target.getAttribute('data-showcase-id');
+              const updateResponse = await fetch(`${API_BASE_URL}/api/admin/showcase/${id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                },
+                body: JSON.stringify({ order: Number(event.target.value) })
+              });
+              const result = await updateResponse.json();
+              if (!updateResponse.ok) {
+                alert(result.message || 'Could not update entry.');
+              }
+              fetchShowcase();
+            });
+          });
+
+          document.querySelectorAll('button[data-delete-showcase-id]').forEach((button) => {
+            button.addEventListener('click', async (event) => {
+              const id = event.target.getAttribute('data-delete-showcase-id');
+              if (!confirm('Delete this showcase entry?')) return;
+
+              const deleteResponse = await fetch(`${API_BASE_URL}/api/admin/showcase/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': getAuthHeader(adminUser, adminPass)
+                }
+              });
+
+              const result = await deleteResponse.json();
+              alert(result.message || 'Deleted');
+              fetchShowcase();
+            });
+          });
+        } catch (error) {
+          loginView.style.display = 'block';
+          adminView.style.display = 'none';
+          loginError.textContent = 'Invalid username or password.';
+        }
+      }
+
+      addShowcaseForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        addShowcaseError.textContent = '';
+
+        const payload = {
+          name: document.getElementById('newShowcaseName').value.trim(),
+          role: document.getElementById('newShowcaseRole').value.trim(),
+          rating: Number(document.getElementById('newShowcaseRating').value),
+          photo: document.getElementById('newShowcasePhoto').value.trim(),
+          order: Number(document.getElementById('newShowcaseOrder').value) || undefined,
+          blurb: document.getElementById('newShowcaseBlurb').value.trim()
+        };
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/admin/showcase`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': getAuthHeader(adminUser, adminPass)
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            addShowcaseError.textContent = result.message || 'Could not add showcase entry.';
+            return;
+          }
+
+          addShowcaseForm.reset();
+          fetchShowcase();
+        } catch (error) {
+          addShowcaseError.textContent = 'Something went wrong. Please try again.';
+        }
+      });
+
       function showAdminPanel() {
         loginView.style.display = 'none';
         adminView.style.display = 'block';
@@ -618,6 +784,7 @@
         fetchContacts();
         fetchWorkers();
         fetchServices();
+        fetchShowcase();
         clearInterval(window.anyworkRefreshTimer);
         window.anyworkRefreshTimer = setInterval(() => {
           fetchContacts();

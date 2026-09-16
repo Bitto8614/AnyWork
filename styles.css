@@ -800,6 +800,67 @@ textarea {
   color: var(--muted);
 }
 
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.showcase-card {
+  background: var(--panel);
+  border: 1px solid rgba(18, 61, 138, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(24, 33, 47, 0.05);
+  padding: 1.8rem;
+  text-align: center;
+}
+
+.showcase-photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+  display: block;
+}
+
+.showcase-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+}
+
+.showcase-role {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.showcase-rating {
+  display: block;
+  color: #f5a623;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.6rem;
+}
+
+.showcase-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 900px) {
+  .showcase-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .showcase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .service-card,
 .step-card,
 .price-card,

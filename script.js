@@ -127,6 +127,46 @@ document.addEventListener("DOMContentLoaded", () => {
     loadServices(servicesCatalogGrid);
   }
 
+  const renderStars = (rating) => {
+    const full = Math.round(Number(rating) || 0);
+    return Array.from({ length: 5 }, (_, index) => (index < full ? "★" : "☆")).join("");
+  };
+
+  const renderShowcaseCard = (entry) => `
+    <article class="showcase-card">
+      <img src="${escapeHtml(entry.photo)}" alt="${escapeHtml(entry.name)}" class="showcase-photo" />
+      <h3>${escapeHtml(entry.name)}</h3>
+      <span class="showcase-role">${escapeHtml(entry.role)}</span>
+      <span class="showcase-rating" aria-label="Rating: ${escapeHtml(entry.rating)} out of 5">${renderStars(entry.rating)}</span>
+      <p>${escapeHtml(entry.blurb)}</p>
+    </article>
+  `;
+
+  const loadShowcase = async () => {
+    const showcaseSection = document.getElementById("meet-helpers");
+    const showcaseGrid = document.getElementById("showcase-grid");
+    if (!showcaseSection || !showcaseGrid) return;
+
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/api/showcase`);
+      if (!response.ok) throw new Error("Failed to load showcase");
+      const data = await response.json();
+      const showcase = Array.isArray(data.showcase) ? data.showcase : [];
+
+      if (!showcase.length) {
+        showcaseSection.style.display = "none";
+        return;
+      }
+
+      showcaseGrid.innerHTML = showcase.map(renderShowcaseCard).join("");
+      showcaseSection.style.display = "";
+    } catch (error) {
+      showcaseSection.style.display = "none";
+    }
+  };
+
+  loadShowcase();
+
   if (countrySelect) {
     countrySelect.value = storedCurrency;
     countrySelect.addEventListener("change", (event) => {
