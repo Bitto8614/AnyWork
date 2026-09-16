@@ -1222,6 +1222,7 @@ blockquote {
 
 .detail-copy,
 .detail-panel,
+.detail-more,
 .faq-section {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -1230,15 +1231,30 @@ blockquote {
 }
 
 .detail-copy,
-.detail-panel {
+.detail-panel,
+.detail-more {
   padding: 1.8rem;
 }
 
 .detail-copy h2,
 .detail-panel h3,
+.detail-more h2,
 .faq-section h3 {
   margin-top: 0;
   margin-bottom: 1rem;
+}
+
+.detail-more {
+  margin-top: 1.5rem;
+}
+
+.detail-more p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.detail-more p:last-child {
+  margin-bottom: 0;
 }
 
 .detail-list {
