@@ -97,6 +97,14 @@ textarea {
   letter-spacing: -0.04em;
 }
 
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .brand-mark {
   width: 42px;
   height: 42px;
