@@ -697,6 +697,7 @@ textarea {
   margin-bottom: 1.5rem;
 }
 
+.section-heading h1,
 .section-heading h2 {
   margin: 0;
   font-size: clamp(2rem, 3vw, 3rem);
