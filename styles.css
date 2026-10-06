@@ -1,15 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
+
 :root {
-  --bg: #f6f9fc;
+  --bg: #f8f6f1;
   --panel: #ffffff;
-  --panel-strong: #eaf2ff;
-  --primary: #ff7a18;
-  --primary-dark: #e36400;
-  --secondary: #123d8a;
-  --secondary-soft: #dfeaff;
-  --text: #18212f;
-  --muted: #59657a;
-  --border: #e2e8f0;
-  --shadow: 0 18px 40px rgba(18, 61, 138, 0.12);
+  --panel-strong: #f1ecdf;
+  --primary: #c9a15a;
+  --primary-dark: #8c6425;
+  --secondary: #0f2a52;
+  --secondary-soft: #e3e8f2;
+  --text: #1b2230;
+  --muted: #5c6472;
+  --border: #e7e2d5;
+  --shadow: 0 20px 48px rgba(15, 23, 42, 0.1);
+  --font-display: 'Playfair Display', serif;
 }
 
 * {
@@ -24,15 +27,15 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(255, 122, 24, 0.12), transparent 18%),
-    radial-gradient(circle at bottom right, rgba(18, 61, 138, 0.08), transparent 22%),
-    linear-gradient(180deg, #f7f9fc 0%, #f4f8fb 100%);
+    radial-gradient(circle at top left, rgba(201, 161, 90, 0.1), transparent 18%),
+    radial-gradient(circle at bottom right, rgba(15, 42, 82, 0.07), transparent 22%),
+    linear-gradient(180deg, #f9f7f2 0%, #f6f4ee 100%);
   color: var(--text);
   line-height: 1.6;
 }
 
 ::selection {
-  background: rgba(255, 122, 24, 0.18);
+  background: rgba(201, 161, 90, 0.22);
 }
 
 a {
@@ -58,26 +61,38 @@ textarea {
 }
 
 .section {
-  padding: 3rem 0;
+  padding: 4.5rem 0;
 }
 
 .eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--primary-dark);
   margin-bottom: 1rem;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 2px;
+  background: var(--primary);
+  display: inline-block;
 }
 
 .site-header {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(6, 10, 16, 0.92);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background: rgba(8, 14, 26, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(201, 161, 90, 0.18);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .nav-wrap {
@@ -197,38 +212,39 @@ textarea {
   padding: 0.9rem 1.5rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, border-color 0.2s ease, filter 0.2s ease;
   border: 1px solid transparent;
-  box-shadow: 0 10px 22px rgba(18, 61, 138, 0.08);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
 
 .btn:hover,
 .btn:focus-visible {
   transform: translateY(-2px);
-  filter: brightness(1.02);
+  filter: brightness(1.03);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, #1a3a66 100%);
   color: white;
-  box-shadow: 0 16px 30px rgba(18, 61, 138, 0.18), 0 12px 22px rgba(255, 122, 24, 0.22);
+  border: 1px solid rgba(201, 161, 90, 0.35);
+  box-shadow: 0 16px 30px rgba(15, 42, 82, 0.28), 0 0 0 1px rgba(201, 161, 90, 0.08) inset;
 }
 
 .btn-primary:hover,
 .btn-primary:focus-visible {
-  box-shadow: 0 18px 34px rgba(18, 61, 138, 0.22), 0 14px 24px rgba(255, 122, 24, 0.26);
+  box-shadow: 0 20px 36px rgba(15, 42, 82, 0.32), 0 0 0 1px rgba(201, 161, 90, 0.2) inset;
 }
 
 .btn-secondary {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 246, 252, 0.96));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 246, 241, 0.97));
   color: var(--secondary);
-  border-color: rgba(18, 61, 138, 0.12);
+  border-color: rgba(15, 42, 82, 0.14);
 }
 
 .btn-secondary:hover,
 .btn-secondary:focus-visible {
-  border-color: rgba(18, 61, 138, 0.25);
-  box-shadow: 0 14px 24px rgba(18, 61, 138, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.08);
 }
 
 .moving-carousel-section,
@@ -278,7 +294,7 @@ textarea {
 }
 
 .carousel-testimonials {
-  background: linear-gradient(135deg, rgba(18, 61, 138, 0.08), rgba(255, 122, 24, 0.1));
+  background: linear-gradient(135deg, rgba(15, 42, 82, 0.08), rgba(201, 161, 90, 0.1));
 }
 
 .carousel-testimonials .carousel-slide {
@@ -330,7 +346,7 @@ textarea {
 
 .dot.active {
   background: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.2);
+  box-shadow: 0 0 0 3px rgba(201, 161, 90, 0.25);
 }
 
 .urban-hero {
@@ -367,7 +383,7 @@ textarea {
 }
 
 .urban-copy-panel {
-  background: #121417;
+  background: linear-gradient(160deg, #0b1830 0%, #0f2a52 70%, #15335f 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -390,9 +406,11 @@ textarea {
 
 .urban-copy h1 {
   margin: 0 0 1.25rem;
+  font-family: var(--font-display);
   font-size: clamp(2.4rem, 3vw, 4rem);
-  line-height: 1.08;
-  letter-spacing: -0.06em;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-weight: 700;
   color: #fff;
   max-width: 520px;
 }
@@ -463,9 +481,11 @@ textarea {
 }
 
 .hero-copy h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: clamp(2.4rem, 5vw, 4rem);
-  line-height: 1.08;
-  letter-spacing: -0.06em;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
   margin: 0 0 1rem;
   max-width: 560px;
 }
@@ -577,15 +597,15 @@ textarea {
 }
 
 .hero-card {
-  background: linear-gradient(135deg, #0a1a35 0%, #123d8a 58%, #1c4ca8 100%);
+  background: linear-gradient(135deg, #0b1830 0%, #15335f 58%, #1f4273 100%);
   color: white;
   border-radius: 28px;
   padding: 2rem;
-  box-shadow: 0 25px 40px rgba(18, 61, 138, 0.2);
+  box-shadow: 0 25px 40px rgba(15, 42, 82, 0.25);
   max-width: 420px;
   margin-left: auto;
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(201, 161, 90, 0.18);
   margin-top: -0.25rem;
 }
 
@@ -602,6 +622,8 @@ textarea {
 .hero-card h2 {
   margin-top: 0;
   margin-bottom: 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 2rem;
 }
 
@@ -699,7 +721,7 @@ textarea {
   width: fit-content;
   padding: 0.38rem 0.7rem;
   border-radius: 999px;
-  background: rgba(255, 122, 24, 0.12);
+  background: rgba(201, 161, 90, 0.16);
   color: var(--primary-dark);
   font-size: 0.72rem;
   font-weight: 700;
@@ -714,8 +736,10 @@ textarea {
 .section-heading h1,
 .section-heading h2 {
   margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: clamp(2rem, 3vw, 3rem);
-  letter-spacing: -0.05em;
+  letter-spacing: -0.01em;
 }
 
 .services-status {
@@ -916,7 +940,7 @@ blockquote {
   font-size: 4.5rem;
   line-height: 1;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(135deg, rgba(18, 61, 138, 0.12), rgba(255, 122, 24, 0.14));
+  background: linear-gradient(135deg, rgba(15, 42, 82, 0.12), rgba(201, 161, 90, 0.16));
 }
 
 .service-card-content {
@@ -1055,7 +1079,7 @@ blockquote {
 }
 
 .pricing-section {
-  background: linear-gradient(180deg, rgba(18, 61, 138, 0.04), rgba(255, 122, 24, 0.04));
+  background: linear-gradient(180deg, rgba(15, 42, 82, 0.05), rgba(201, 161, 90, 0.06));
 }
 
 .price-card {
@@ -1095,8 +1119,8 @@ blockquote {
 }
 
 .featured {
-  border-color: rgba(255, 122, 24, 0.35);
-  background: linear-gradient(180deg, #fff7f2 0%, #ffffff 100%);
+  border-color: rgba(201, 161, 90, 0.4);
+  background: linear-gradient(180deg, #fbf6ea 0%, #ffffff 100%);
   transform: translateY(-8px);
 }
 
@@ -1201,9 +1225,11 @@ blockquote {
 
 .detail-hero h1 {
   margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: clamp(2.2rem, 4vw, 4rem);
-  line-height: 1.05;
-  letter-spacing: -0.05em;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
 }
 
 .detail-hero p {
@@ -1302,9 +1328,10 @@ blockquote {
 }
 
 .site-footer {
-  background: #0e1d38;
+  background: #0b1830;
   color: rgba(255, 255, 255, 0.75);
   padding: 0.9rem 0;
+  border-top: 1px solid rgba(201, 161, 90, 0.18);
 }
 
 .footer-wrap {
