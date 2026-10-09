@@ -159,6 +159,27 @@ document.addEventListener("DOMContentLoaded", () => {
     loadServices(servicesCatalogGrid);
   }
 
+  const serviceSearchInput = document.getElementById("service-search-input");
+  if (serviceSearchInput && servicesCatalogGrid) {
+    const searchEmptyState = document.getElementById("service-search-empty");
+
+    serviceSearchInput.addEventListener("input", () => {
+      const query = serviceSearchInput.value.trim().toLowerCase();
+      const cards = servicesCatalogGrid.querySelectorAll(".service-card-link");
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const matches = !query || card.textContent.toLowerCase().includes(query);
+        card.classList.toggle("service-card-hidden", !matches);
+        if (matches) visibleCount += 1;
+      });
+
+      if (searchEmptyState) {
+        searchEmptyState.hidden = visibleCount !== 0 || !cards.length;
+      }
+    });
+  }
+
   const renderStars = (rating) => {
     const full = Math.round(Number(rating) || 0);
     return Array.from({ length: 5 }, (_, index) => (index < full ? "★" : "☆")).join("");

@@ -49,6 +49,13 @@
           <h1>Everything you need when life needs a quick reset.</h1>
         </div>
 
+        <div class="service-search-wrap">
+          <label for="service-search-input" class="sr-only">Search services by keyword</label>
+          <input type="search" id="service-search-input" class="service-search-input" placeholder="Search services, e.g. &quot;plumber&quot;, &quot;cleaning&quot;, &quot;moving&quot;..." autocomplete="off" />
+        </div>
+
+        <p class="services-loading" id="service-search-empty" hidden>No services match your search. Try a different keyword or browse all services below.</p>
+
         <div class="service-grid" id="services-catalog-grid">
           <p class="services-loading">Loading services...</p>
         </div>
