@@ -187,7 +187,7 @@ textarea {
 
 .main-nav a:hover,
 .main-nav a:focus-visible {
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .free-badge {
@@ -1082,6 +1082,79 @@ blockquote {
   background: linear-gradient(180deg, rgba(15, 42, 82, 0.05), rgba(201, 161, 90, 0.06));
 }
 
+.offer-banner[hidden] {
+  display: none;
+}
+
+.offer-section {
+  padding-top: 0.5rem;
+}
+
+.offer-section .offer-banner {
+  margin-bottom: 0;
+}
+
+.offer-banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin: 0 0 2.5rem;
+  padding: 2rem 2.2rem;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--secondary) 0%, #1a3a66 100%);
+  border: 1px solid rgba(201, 161, 90, 0.35);
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.18);
+  color: #fff;
+}
+
+.offer-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--primary);
+  color: #1b2230;
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.offer-banner h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #fff;
+}
+
+.offer-price {
+  color: var(--primary);
+}
+
+.offer-banner p {
+  margin: 0;
+  max-width: 640px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.offer-banner .btn-primary {
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .offer-banner {
+    padding: 1.6rem;
+  }
+
+  .offer-banner h2 {
+    font-size: 1.3rem;
+  }
+}
+
+
 .price-card {
   position: relative;
   display: flex;
@@ -1116,6 +1189,14 @@ blockquote {
 .price span {
   font-size: 0.9rem;
   color: var(--muted);
+}
+
+.price-quote-note {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--secondary);
+  line-height: 1.4;
 }
 
 .featured {

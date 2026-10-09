@@ -57,15 +57,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const countrySelect = document.getElementById("country-currency-select");
   const priceAmounts = document.querySelectorAll(".price-amount");
+  const offerPrices = document.querySelectorAll(".offer-price");
+  const offerCopyUsd = document.querySelectorAll(".offer-copy-usd");
+  const offerCopyInr = document.querySelectorAll(".offer-copy-inr");
   const storedCurrency = safeStorage.get("anywork_currency", "USD");
 
   const applyCurrency = (currency) => {
-    priceAmounts.forEach((amountEl) => {
-      const value = currency === "INR" ? amountEl.dataset.inr : amountEl.dataset.usd;
+    const isIndia = currency === "INR";
+
+    const indiaPricingNote = document.getElementById("india-pricing-note");
+    if (indiaPricingNote) indiaPricingNote.hidden = !isIndia;
+
+    offerPrices.forEach((priceEl) => {
+      const value = isIndia ? priceEl.dataset.inr : priceEl.dataset.usd;
       if (!value) return;
-      const symbol = currency === "INR" ? "₹" : "$";
-      const locale = currency === "INR" ? "en-IN" : "en-US";
-      amountEl.textContent = `${symbol}${Number(value).toLocaleString(locale)}`;
+      const symbol = isIndia ? "₹" : "$";
+      const locale = isIndia ? "en-IN" : "en-US";
+      priceEl.textContent = `${symbol}${Number(value).toLocaleString(locale)}`;
+    });
+
+    offerCopyUsd.forEach((el) => { el.hidden = isIndia; });
+    offerCopyInr.forEach((el) => { el.hidden = !isIndia; });
+
+    priceAmounts.forEach((amountEl) => {
+      const priceEl = amountEl.closest(".price");
+      const unitEl = priceEl ? priceEl.querySelector(".price-unit") : null;
+      const noteEl = priceEl ? priceEl.querySelector(".price-quote-note") : null;
+
+      if (isIndia) {
+        amountEl.hidden = true;
+        if (unitEl) unitEl.hidden = true;
+        if (noteEl) noteEl.hidden = false;
+        return;
+      }
+
+      amountEl.hidden = false;
+      if (unitEl) unitEl.hidden = false;
+      if (noteEl) noteEl.hidden = true;
+
+      const value = amountEl.dataset.usd;
+      if (!value) return;
+      amountEl.textContent = `$${Number(value).toLocaleString("en-US")}`;
     });
 
     safeStorage.set("anywork_currency", currency);
@@ -175,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (priceAmounts.length) {
+  if (priceAmounts.length || offerPrices.length) {
     applyCurrency(storedCurrency);
   }
 
