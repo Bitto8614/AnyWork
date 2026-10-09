@@ -138,6 +138,21 @@ textarea {
   line-height: 1;
 }
 
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.brand-tagline {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--primary);
+  line-height: 1;
+}
+
 .main-nav {
   display: flex;
   align-items: center;
