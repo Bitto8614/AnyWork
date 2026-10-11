@@ -15,6 +15,32 @@ document.addEventListener("DOMContentLoaded", () => {
     yearNode.textContent = new Date().getFullYear();
   }
 
+  const navToggle = document.getElementById("navToggle");
+  const navWrap = navToggle?.closest(".nav-wrap");
+  if (navToggle && navWrap) {
+    const closeNav = () => {
+      navWrap.classList.remove("nav-open");
+      navToggle.setAttribute("aria-expanded", "false");
+    };
+
+    navToggle.addEventListener("click", () => {
+      const isOpen = navWrap.classList.toggle("nav-open");
+      navToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    navWrap.querySelectorAll(".main-nav a").forEach((link) => {
+      link.addEventListener("click", closeNav);
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!navWrap.contains(event.target)) closeNav();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeNav();
+    });
+  }
+
   const carousels = document.querySelectorAll(".carousel");
   carousels.forEach((carousel) => {
     const track = carousel.querySelector(".carousel-track");
