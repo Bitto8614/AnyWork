@@ -103,12 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
     safeStorage.set("anywork_currency", currency);
   };
 
-  const applyCountryServices = (currency) => {
+  const applyCountryServices = () => {
     const cards = document.querySelectorAll("#service-grid .service-card-link[data-country]");
     if (!cards.length) return;
-    const country = currency === "INR" ? "india" : "usa";
     cards.forEach((card) => {
-      card.classList.toggle("service-card-hidden", card.dataset.country !== country);
+      card.classList.remove("service-card-hidden");
     });
   };
 
