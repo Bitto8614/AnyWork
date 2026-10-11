@@ -267,6 +267,15 @@
         }[char]));
       }
 
+      function safeHttpUrl(value) {
+        try {
+          const url = new URL(String(value ?? ''));
+          return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : null;
+        } catch (error) {
+          return null;
+        }
+      }
+
       function showTab(tab) {
         tabContacts.classList.toggle('active', tab === 'contacts');
         tabWorkers.classList.toggle('active', tab === 'workers');
@@ -313,7 +322,11 @@
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Service</th>
+                  <th>Address</th>
+                  <th>Preferred date/time</th>
                   <th>Hours needed</th>
+                  <th>Urgency</th>
+                  <th>Contact method</th>
                   <th>Details</th>
                   <th>Received</th>
                   <th>Status</th>
@@ -327,7 +340,11 @@
                     <td>${escapeHtml(contact.email)}</td>
                     <td>${escapeHtml(contact.phone) || 'Not provided'}</td>
                     <td>${escapeHtml(contact.service)}</td>
+                    <td>${escapeHtml(contact.address) || 'Not provided'}</td>
+                    <td>${escapeHtml(contact.preferredDate) || 'Any date'}${contact.preferredTime ? ' / ' + escapeHtml(contact.preferredTime) : ''}</td>
                     <td>${escapeHtml(contact.hoursNeeded) || 'Not specified'}</td>
+                    <td>${escapeHtml(contact.urgency) || 'Not specified'}</td>
+                    <td>${escapeHtml(contact.contactMethod) || 'Not specified'}</td>
                     <td>${escapeHtml(contact.details)}</td>
                     <td>${new Date(contact.createdAt).toLocaleString()}</td>
                     <td>
@@ -423,6 +440,10 @@
                   <th>City</th>
                   <th>Registering from</th>
                   <th>Service</th>
+                  <th>Experience</th>
+                  <th>Availability</th>
+                  <th>Own tools/vehicle</th>
+                  <th>Reference</th>
                   <th>Notes</th>
                   <th>Photo ID</th>
                   <th>Status</th>
@@ -438,6 +459,10 @@
                     <td>${escapeHtml(worker.city) || 'Not provided'}</td>
                     <td>${escapeHtml(worker.registeringFrom) || 'Not specified'}</td>
                     <td>${escapeHtml(worker.service)}</td>
+                    <td>${escapeHtml(worker.experienceYears) || 'Not specified'}</td>
+                    <td>${escapeHtml(worker.availability) || 'Not specified'}</td>
+                    <td>${escapeHtml(worker.ownToolsOrVehicle) || 'Not specified'}</td>
+                    <td>${safeHttpUrl(worker.referenceLink) ? `<a href="${escapeHtml(safeHttpUrl(worker.referenceLink))}" target="_blank" rel="noopener noreferrer">Link</a>` : 'Not provided'}</td>
                     <td>${escapeHtml(worker.details)}</td>
                     <td>${worker.photoId ? `<a href="${API_BASE_URL}/uploads/photo-ids/${encodeURIComponent(worker.photoId)}" target="_blank" rel="noopener">View</a>` : 'Not provided'}</td>
                     <td>

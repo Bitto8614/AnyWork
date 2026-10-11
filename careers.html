@@ -62,18 +62,25 @@
         </div>
 
         <form class="contact-form" id="careerForm" enctype="multipart/form-data">
+          <p class="form-section-title">Your details</p>
           <label>Full name<input type="text" name="name" required /></label>
-          <label>Email<input type="email" name="email" required /></label>
-          <label>Phone<input type="tel" name="phone" required /></label>
-          <label>City you live in<input type="text" name="city" placeholder="e.g. Chicago" required /></label>
-          <label>Registering from
-            <select name="registeringFrom" required>
-              <option value="">Select where you are registering from</option>
-              <option>India</option>
-              <option>USA</option>
-              <option>Other</option>
-            </select>
-          </label>
+          <div class="form-row">
+            <label>Email<input type="email" name="email" required /></label>
+            <label>Phone<input type="tel" name="phone" required /></label>
+          </div>
+          <div class="form-row">
+            <label>City you live in<input type="text" name="city" placeholder="e.g. Chicago" required /></label>
+            <label>Registering from
+              <select name="registeringFrom" required>
+                <option value="">Select where you are registering from</option>
+                <option>India</option>
+                <option>USA</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="form-section-title">Work details</p>
           <label>Service type
             <select name="service" required>
               <option value="">Select a service</option>
@@ -98,7 +105,36 @@
               <option>Construction work</option>
             </select>
           </label>
+          <div class="form-row">
+            <label>Years of experience
+              <select name="experienceYears" required>
+                <option value="">Select experience</option>
+                <option>Less than 1 year</option>
+                <option>1-2 years</option>
+                <option>3-5 years</option>
+                <option>5+ years</option>
+              </select>
+            </label>
+            <label>Availability
+              <select name="availability" required>
+                <option value="">Select availability</option>
+                <option>Weekdays</option>
+                <option>Weekends</option>
+                <option>Evenings only</option>
+                <option>Full-time / anytime</option>
+              </select>
+            </label>
+          </div>
+          <label>Do you have your own tools and/or vehicle for this work?
+            <select name="ownToolsOrVehicle">
+              <option value="">Select an option</option>
+              <option>Yes, I have my own tools and/or vehicle</option>
+              <option>No, I don't have my own tools or vehicle</option>
+              <option>Not applicable to this type of work</option>
+            </select>
+          </label>
           <label>Experience / details<textarea name="details" rows="4" required></textarea></label>
+          <label>LinkedIn, portfolio, or reference link <span class="form-hint">(optional)</span><input type="url" name="referenceLink" placeholder="https://" /></label>
           <label>Photo ID (optional)<input type="file" name="photoId" accept="image/png,image/jpeg,image/webp,application/pdf" /></label>
           <button type="submit" class="btn btn-primary">Register Now</button>
         </form>

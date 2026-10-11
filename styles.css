@@ -1381,6 +1381,35 @@ blockquote {
   border-color: rgba(18, 61, 138, 0.3);
 }
 
+.form-section-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 700;
+  margin: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.form-section-title:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-hint {
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .detail-page {
   max-width: 980px;
 }
@@ -1685,6 +1714,10 @@ blockquote {
 
   .contact-form {
     padding: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
 
   .footer-wrap {

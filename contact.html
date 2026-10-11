@@ -57,9 +57,14 @@
         </div>
 
         <form class="contact-form" id="contactForm">
+          <p class="form-section-title">Your details</p>
           <label>Full name<input type="text" name="name" required /></label>
-          <label>Email<input type="email" name="email" required /></label>
-          <label>Phone<input type="tel" name="phone" required /></label>
+          <div class="form-row">
+            <label>Email<input type="email" name="email" required /></label>
+            <label>Phone<input type="tel" name="phone" required /></label>
+          </div>
+
+          <p class="form-section-title">Job details</p>
           <label>Service needed
             <select name="service" required>
               <option value="">Select a service</option>
@@ -82,14 +87,48 @@
               <option>Construction work</option>
             </select>
           </label>
-          <label>How many hours do you need help for?
-            <select name="hoursNeeded" required>
-              <option value="">Select duration</option>
-              <option>1-2 hours</option>
-              <option>3-5 hours</option>
-              <option>Half day (6 hours)</option>
-              <option>Full day (8+ hours)</option>
-              <option>Multi-day project</option>
+          <label>Service address or city & ZIP<input type="text" name="address" placeholder="e.g. 123 Main St, Chicago, IL 60601" required /></label>
+          <div class="form-row">
+            <label>Preferred date <span class="form-hint">(optional)</span><input type="date" name="preferredDate" /></label>
+            <label>Preferred time
+              <select name="preferredTime">
+                <option value="">No preference</option>
+                <option>Morning (8am - 12pm)</option>
+                <option>Afternoon (12pm - 5pm)</option>
+                <option>Evening (5pm - 9pm)</option>
+                <option>Flexible / anytime</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>How many hours do you need help for?
+              <select name="hoursNeeded" required>
+                <option value="">Select duration</option>
+                <option>1-2 hours</option>
+                <option>3-5 hours</option>
+                <option>Half day (6 hours)</option>
+                <option>Full day (8+ hours)</option>
+                <option>Multi-day project</option>
+              </select>
+            </label>
+            <label>How urgent is this?
+              <select name="urgency" required>
+                <option value="">Select urgency</option>
+                <option>ASAP / today</option>
+                <option>Within a few days</option>
+                <option>Within a week</option>
+                <option>Flexible / just planning</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="form-section-title">How should we reach you?</p>
+          <label>Preferred contact method
+            <select name="contactMethod" required>
+              <option value="">Select a method</option>
+              <option>Phone call</option>
+              <option>Text / SMS</option>
+              <option>Email</option>
             </select>
           </label>
           <label>Details<textarea name="details" rows="4" required></textarea></label>

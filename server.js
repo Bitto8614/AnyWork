@@ -585,11 +585,14 @@ app.delete('/api/contact/:id', requireAdmin, (req, res) => {
 });
 
 app.post('/api/contact', async (req, res) => {
-  const { name, email, phone, service, hoursNeeded, details } = req.body || {};
+  const {
+    name, email, phone, service, hoursNeeded, details,
+    address, preferredDate, preferredTime, urgency, contactMethod
+  } = req.body || {};
 
-  if (!name || !email || !phone || !service || !hoursNeeded || !details) {
+  if (!name || !email || !phone || !service || !hoursNeeded || !details || !address || !urgency || !contactMethod) {
     return res.status(400).json({
-      message: 'Please provide your name, email, phone, service, hours needed, and project details.'
+      message: 'Please provide your name, email, phone, service, address, hours needed, urgency, preferred contact method, and project details.'
     });
   }
 
@@ -600,7 +603,12 @@ app.post('/api/contact', async (req, res) => {
     email,
     phone,
     service,
+    address,
+    preferredDate: preferredDate || null,
+    preferredTime: preferredTime || null,
     hoursNeeded,
+    urgency,
+    contactMethod,
     details,
     status: 'new',
     createdAt: new Date().toISOString()
@@ -623,7 +631,12 @@ app.post('/api/contact', async (req, res) => {
         <p><strong>Email:</strong> ${escapeHtml(email)}</p>
         <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
         <p><strong>Service:</strong> ${escapeHtml(service)}</p>
+        <p><strong>Address:</strong> ${escapeHtml(address)}</p>
+        <p><strong>Preferred date:</strong> ${escapeHtml(preferredDate) || 'Not specified'}</p>
+        <p><strong>Preferred time:</strong> ${escapeHtml(preferredTime) || 'Not specified'}</p>
         <p><strong>Hours needed:</strong> ${escapeHtml(hoursNeeded)}</p>
+        <p><strong>Urgency:</strong> ${escapeHtml(urgency)}</p>
+        <p><strong>Preferred contact method:</strong> ${escapeHtml(contactMethod)}</p>
         <p><strong>Details:</strong></p>
         <p>${escapeHtml(details).replace(/\n/g, '<br>')}</p>
       `,
@@ -652,11 +665,14 @@ app.post('/api/career/register', (req, res, next) => {
     return next();
   });
 }, async (req, res) => {
-  const { name, email, phone, city, service, details, registeringFrom } = req.body || {};
+  const {
+    name, email, phone, city, service, details, registeringFrom,
+    experienceYears, availability, ownToolsOrVehicle, referenceLink
+  } = req.body || {};
 
-  if (!name || !email || !phone || !city || !service || !details || !registeringFrom) {
+  if (!name || !email || !phone || !city || !service || !details || !registeringFrom || !experienceYears || !availability) {
     return res.status(400).json({
-      message: 'Please provide your name, email, phone, city, service, registration location, and experience details.'
+      message: 'Please provide your name, email, phone, city, service, registration location, years of experience, availability, and experience details.'
     });
   }
 
@@ -669,6 +685,10 @@ app.post('/api/career/register', (req, res, next) => {
     city,
     registeringFrom,
     service,
+    experienceYears,
+    availability,
+    ownToolsOrVehicle: ownToolsOrVehicle || null,
+    referenceLink: referenceLink || null,
     details,
     photoId: req.file ? req.file.filename : null,
     status: 'pending',
@@ -695,6 +715,10 @@ app.post('/api/career/register', (req, res, next) => {
         <p><strong>City:</strong> ${escapeHtml(city)}</p>
         <p><strong>Registering from:</strong> ${escapeHtml(registeringFrom)}</p>
         <p><strong>Service:</strong> ${escapeHtml(service)}</p>
+        <p><strong>Years of experience:</strong> ${escapeHtml(experienceYears)}</p>
+        <p><strong>Availability:</strong> ${escapeHtml(availability)}</p>
+        <p><strong>Own tools/vehicle:</strong> ${escapeHtml(ownToolsOrVehicle) || 'Not specified'}</p>
+        <p><strong>Reference link:</strong> ${escapeHtml(referenceLink) || 'Not provided'}</p>
         <p><strong>Photo ID submitted:</strong> ${newEntry.photoId ? 'Yes' : 'No'}</p>
         <p><strong>Experience/details:</strong></p>
         <p>${escapeHtml(details).replace(/\n/g, '<br>')}</p>
