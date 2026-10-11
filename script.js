@@ -184,13 +184,14 @@ document.addEventListener("DOMContentLoaded", () => {
     loadServices(servicesCatalogGrid);
   }
 
-  const serviceSearchInput = document.getElementById("service-search-input");
-  if (serviceSearchInput && servicesCatalogGrid) {
-    const searchEmptyState = document.getElementById("service-search-empty");
+  const setupServiceSearch = (inputId, emptyId, gridEl) => {
+    const input = document.getElementById(inputId);
+    if (!input || !gridEl) return;
+    const emptyState = document.getElementById(emptyId);
 
-    serviceSearchInput.addEventListener("input", () => {
-      const query = serviceSearchInput.value.trim().toLowerCase();
-      const cards = servicesCatalogGrid.querySelectorAll(".service-card-link");
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      const cards = gridEl.querySelectorAll(".service-card-link");
       let visibleCount = 0;
 
       cards.forEach((card) => {
@@ -199,11 +200,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (matches) visibleCount += 1;
       });
 
-      if (searchEmptyState) {
-        searchEmptyState.hidden = visibleCount !== 0 || !cards.length;
+      if (emptyState) {
+        emptyState.hidden = visibleCount !== 0 || !cards.length;
       }
     });
-  }
+  };
+
+  setupServiceSearch("service-search-input", "service-search-empty", servicesCatalogGrid);
 
   const renderStars = (rating) => {
     const full = Math.round(Number(rating) || 0);
@@ -267,6 +270,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (serviceGrid) {
     loadServices(serviceGrid);
   }
+
+  setupServiceSearch("home-service-search-input", "home-service-search-empty", serviceGrid);
 
   if (citySelect && serviceGrid && servicesTitle && servicesStatus) {
     const defaultText = "Select your country and city";

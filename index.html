@@ -281,6 +281,13 @@
             <p id="services-status" class="services-status">Select a city to view available services.</p>
           </div>
 
+          <div class="service-search-wrap">
+            <label for="home-service-search-input" class="sr-only">Search services by keyword</label>
+            <input type="search" id="home-service-search-input" class="service-search-input" placeholder="Search services, e.g. &quot;plumber&quot;, &quot;cleaning&quot;, &quot;moving&quot;..." autocomplete="off" />
+          </div>
+
+          <p class="services-loading" id="home-service-search-empty" hidden>No services match your search. Try a different keyword or browse all services below.</p>
+
           <div class="service-grid service-grid-hidden" id="service-grid" data-loading="true">
             <p class="services-loading">Loading services...</p>
           </div>
