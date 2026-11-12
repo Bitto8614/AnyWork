@@ -129,14 +129,64 @@ document.addEventListener("DOMContentLoaded", () => {
     safeStorage.set("anywork_currency", currency);
   };
 
-  const applyCountryServices = () => {
+  const applyCountryServices = (currency) => {
+    const active = (currency || document.body.dataset.currency || "USD").toUpperCase();
+    document.body.dataset.currency = active;
+    const isIndia = active === "INR";
+
     const cards = document.querySelectorAll("#service-grid .service-card-link[data-country]");
     if (!cards.length) return;
+
     cards.forEach((card) => {
-      card.classList.remove("service-card-hidden");
+      const countryTags = (card.dataset.country || "")
+        .toLowerCase()
+        .split(",")
+        .map((tag) => tag.trim());
+
+      const forIndia = countryTags.some((tag) => ["in", "india", "inr"].includes(tag));
+      const forUS = countryTags.some((tag) => ["us", "usa", "usd"].includes(tag));
+      const forAll = countryTags.some((tag) => ["all", "both", "global", ""].includes(tag));
+
+      const show = forAll || (isIndia ? forIndia : forUS);
+      card.dataset.countryVisible = String(show);
+      card.classList.toggle("service-card-hidden", !show);
     });
   };
+  const isCountryVisible = (countryValue, currency) => {
+    const active = (currency || "USD").toUpperCase();
+    const countryTags = (countryValue || "")
+      .toLowerCase()
+      .split(",")
+      .map((tag) => tag.trim());
 
+    const forIndia = countryTags.some((tag) => ["in", "india", "inr"].includes(tag));
+    const forUS = countryTags.some((tag) => ["us", "usa", "usd"].includes(tag));
+    const forAll = countryTags.some((tag) => ["all", "both", "global", ""].includes(tag));
+
+    return forAll || (active === "INR" ? forIndia : forUS);
+  };
+
+  const applyCountryFormOptions = (currency) => {
+    const formServiceSelect = document.querySelector('select[name="service"]');
+    if (!formServiceSelect) return;
+
+    const options = formServiceSelect.querySelectorAll("option[data-country]");
+    if (!options.length) return;
+
+    const active = (currency || "USD").toUpperCase();
+    const isIndia = active === "INR";
+
+    options.forEach((option) => {
+      const shouldShow = isIndia && isCountryVisible(option.dataset.country, active);
+      option.hidden = !shouldShow;
+      option.disabled = !shouldShow;
+    });
+
+    const selectedHiddenOption = Array.from(options).some((option) => option.selected && option.hidden);
+    if (selectedHiddenOption) {
+      formServiceSelect.value = "";
+    }
+  };
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -189,21 +239,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!input || !gridEl) return;
     const emptyState = document.getElementById(emptyId);
 
-    input.addEventListener("input", () => {
+    const refreshServiceVisibility = () => {
       const query = input.value.trim().toLowerCase();
       const cards = gridEl.querySelectorAll(".service-card-link");
       let visibleCount = 0;
 
       cards.forEach((card) => {
-        const matches = !query || card.textContent.toLowerCase().includes(query);
-        card.classList.toggle("service-card-hidden", !matches);
-        if (matches) visibleCount += 1;
+        const matchesCountry = card.dataset.countryVisible !== "false";
+        const matchesQuery = !query || card.textContent.toLowerCase().includes(query);
+        const visible = matchesCountry && matchesQuery;
+        card.classList.toggle("service-card-hidden", !visible);
+        if (visible) visibleCount += 1;
       });
 
       if (emptyState) {
         emptyState.hidden = visibleCount !== 0 || !cards.length;
       }
-    });
+    };
+
+    input.addEventListener("input", refreshServiceVisibility);
+    refreshServiceVisibility();
   };
 
   setupServiceSearch("service-search-input", "service-search-empty", servicesCatalogGrid);
@@ -253,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     countrySelect.addEventListener("change", (event) => {
       applyCurrency(event.target.value);
       applyCountryServices(event.target.value);
+      applyCountryFormOptions(event.target.value);
     });
   }
 
@@ -261,6 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   applyCountryServices(storedCurrency);
+  applyCountryFormOptions(storedCurrency);
 
   const citySelect = document.getElementById("city-select");
   const serviceGrid = document.getElementById("service-grid");
