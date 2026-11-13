@@ -2,13 +2,84 @@ document.addEventListener("DOMContentLoaded", () => {
   const getApiBaseUrl = () => {
     if (window.ANYWORK_API_URL) return window.ANYWORK_API_URL;
 
+    if (window.location.protocol === "file:") {
+      return "";
+    }
+
     const isLocalHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
     if (isLocalHost) {
       return window.location.origin;
     }
 
-    return "https://anywork-opoe.onrender.com";
+    return "";
   };
+
+  const fallbackServices = [
+    {
+      slug: "home-cleaning",
+      name: "Home Cleaning",
+      description: "Routine cleaning and deep-cleaning for kitchens, bedrooms, and living spaces.",
+      country: "usa",
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80",
+      icon: "🧹"
+    },
+    {
+      slug: "moving-help",
+      name: "Moving Help",
+      description: "Loading, carrying, and room setup support for homes, apartments, and offices.",
+      country: "usa",
+      image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=900&q=80",
+      icon: "📦"
+    },
+    {
+      slug: "furniture-setup",
+      name: "Furniture Setup",
+      description: "Bed, table, and shelf assembly with careful placement and room-ready setup.",
+      country: "usa",
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80",
+      icon: "🪑"
+    },
+    {
+      slug: "electrical-work",
+      name: "Electrical Work",
+      description: "Lighting, outlet, and electrical repair support for homes and rentals.",
+      country: "usa",
+      image: "https://images.pexels.com/photos/5691589/pexels-photo-5691589.jpeg?auto=compress&cs=tinysrgb&w=900",
+      icon: "⚡"
+    },
+    {
+      slug: "plumbing",
+      name: "Plumbing",
+      description: "Leak fixes, fixture installation, and quick repair support from expert plumbers.",
+      country: "usa",
+      image: "https://images.pexels.com/photos/32588548/pexels-photo-32588548.jpeg?auto=compress&cs=tinysrgb&w=900",
+      icon: "🔧"
+    },
+    {
+      slug: "driver-help",
+      name: "Driver Help",
+      description: "Reliable local driving support for errands, travel, and family transportation needs.",
+      country: "usa",
+      image: "https://images.pexels.com/photos/29333059/pexels-photo-29333059.jpeg?auto=compress&cs=tinysrgb&w=900",
+      icon: "🚖"
+    },
+    {
+      slug: "old-age-care",
+      name: "Old Age Care",
+      description: "Compassionate everyday care, companionship, and routine support at home.",
+      country: "usa",
+      image: "https://images.pexels.com/photos/7551661/pexels-photo-7551661.jpeg?auto=compress&cs=tinysrgb&w=900",
+      icon: "🧓"
+    },
+    {
+      slug: "nursing",
+      name: "Nursing",
+      description: "At-home nursing support for daily care and medical needs.",
+      country: "india",
+      image: "https://images.pexels.com/photos/5430213/pexels-photo-5430213.jpeg?auto=compress&cs=tinysrgb&w=900",
+      icon: "🩹"
+    }
+  ];
 
   const yearNode = document.getElementById("year");
   if (yearNode) {
@@ -216,17 +287,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const loadServices = async (serviceGridEl) => {
     if (!serviceGridEl) return;
-    try {
-      const response = await fetch(`${getApiBaseUrl()}/api/services`);
-      if (!response.ok) throw new Error("Failed to load services");
-      const data = await response.json();
-      const services = Array.isArray(data.services) ? data.services : [];
-      serviceGridEl.innerHTML = services.map(renderServiceCard).join("");
-    } catch (error) {
-      serviceGridEl.innerHTML = `<p class="services-loading">Could not load services right now. Please refresh the page.</p>`;
-    } finally {
-      applyCountryServices(safeStorage.get("anywork_currency", "USD"));
+
+    const apiBaseUrl = getApiBaseUrl();
+    const endpoints = [
+      apiBaseUrl ? `${apiBaseUrl}/api/services` : "",
+      "/data/services.json",
+      "/services.json",
+      "https://anywork-opoe.onrender.com/api/services"
+    ].filter(Boolean);
+
+    let loadedServices = [];
+
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Failed to load ${endpoint}`);
+        const data = await response.json();
+        const services = Array.isArray(data.services)
+          ? data.services
+          : Array.isArray(data)
+            ? data
+            : [];
+
+        if (services.length) {
+          loadedServices = services;
+          break;
+        }
+      } catch (error) {
+        // Try the next source if the API is unavailable or rate limited.
+      }
     }
+
+    if (!loadedServices.length) {
+      loadedServices = fallbackServices;
+    }
+
+    serviceGridEl.innerHTML = loadedServices.map(renderServiceCard).join("");
+    applyCountryServices(safeStorage.get("anywork_currency", "USD"));
   };
 
   const servicesCatalogGrid = document.getElementById("services-catalog-grid");
