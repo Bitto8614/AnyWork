@@ -1,0 +1,31 @@
+{
+    "name": "AnyWork365",
+    "short_name": "AnyWork365",
+    "description": "Home help and local services for moving, cleaning, repairs, and everyday support.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#f8f4ef",
+    "theme_color": "#191a1a",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/assets/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/assets/favicon-180.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/assets/logo.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

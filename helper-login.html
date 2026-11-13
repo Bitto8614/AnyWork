@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>AnyWork365 Helper Login</title>
+    <meta name="theme-color" content="#191a1a" />
+    <style>
+        :root {
+            --bg: #f7f3ee;
+            --panel: #fff;
+            --ink: #1a1d21;
+            --muted: #5d5f66;
+            --gold: #b89054;
+            --gold-dark: #7d5a2b;
+            --line: rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Inter, Arial, sans-serif;
+            background: linear-gradient(180deg, #f9f5f2 0%, #f0ece7 100%);
+            color: var(--ink);
+        }
+
+        body {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .login-shell {
+            width: min(420px, 100%);
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 22px 40px rgba(15, 23, 42, 0.06);
+            border-radius: 28px;
+            padding: 28px 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 18px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #e7c289 0%, #bc7f38 100%);
+            color: #181818;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.8rem, 4vw, 2.1rem);
+            letter-spacing: -0.05em;
+        }
+
+        p {
+            margin: 0 0 18px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            background: #f8f5f2;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 13px;
+            font: inherit;
+            color: var(--ink);
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #fff;
+            font: inherit;
+            font-weight: 800;
+            padding: 13px 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .helper-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: var(--gold-dark);
+            text-decoration: none;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-shell">
+        <div class="brand">
+            <div class="brand-mark">A</div>
+            <span>AnyWork365</span>
+        </div>
+
+        <h1>Helper login</h1>
+        <p>Access jobs, schedules, and support updates for your service area.</p>
+
+        <form id="helperLoginForm">
+            <div class="field">
+                <label for="helperEmail">Email</label>
+                <input id="helperEmail" type="email" placeholder="you@example.com" required />
+            </div>
+
+            <div class="field">
+                <label for="helperPassword">Password</label>
+                <input id="helperPassword" type="password" placeholder="Enter password" required />
+            </div>
+
+            <button type="submit">Sign in</button>
+        </form>
+
+        <a class="helper-link" href="helper-dashboard.html">Open dashboard</a>
+    </div>
+
+    <script>
+        const form = document.getElementById('helperLoginForm');
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            window.location.href = 'helper-dashboard.html';
+        });
+    </script>
+</body>
+
+</html>

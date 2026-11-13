@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Booking Confirmed | AnyWork365</title>
+    <meta name="theme-color" content="#191a1a" />
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+    <style>
+        :root {
+            --bg: #f7f3ee;
+            --panel: #fff;
+            --ink: #1a1d21;
+            --muted: #5e5e65;
+            --gold: #b89054;
+            --gold-dark: #7d5a2b;
+            --line: rgba(15, 23, 42, 0.08);
+            --success: #1d8f63;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Inter, Arial, sans-serif;
+            background: linear-gradient(180deg, #faf7f3 0%, #efeae4 100%);
+            color: var(--ink);
+        }
+
+        body {
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .card {
+            width: min(480px, 100%);
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 28px;
+            box-shadow: 0 24px 42px rgba(15, 23, 42, 0.08);
+            padding: 28px 22px;
+        }
+
+        .success-badge {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 20px;
+            background: rgba(29, 143, 99, 0.12);
+            color: var(--success);
+            font-size: 2rem;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            text-align: center;
+            letter-spacing: -0.05em;
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .summary {
+            margin-top: 22px;
+            border: 1px solid var(--line);
+            background: #faf8f5;
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row span:first-child {
+            color: var(--muted);
+        }
+
+        .summary-row strong {
+            font-weight: 800;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        a,
+        button {
+            font: inherit;
+        }
+
+        .primary,
+        .secondary {
+            flex: 1;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 14px;
+            font-weight: 800;
+        }
+
+        .primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #fff;
+        }
+
+        .secondary {
+            border: 1px solid var(--line);
+            color: var(--ink);
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="success-badge">✓</div>
+        <h1>Booking confirmed</h1>
+        <p>Your request has been sent and our team will contact you shortly with availability.</p>
+
+        <div class="summary" id="bookingSummary">
+            <div class="summary-row"><span>Service</span><strong id="summaryService">-</strong></div>
+            <div class="summary-row"><span>City</span><strong id="summaryCity">-</strong></div>
+            <div class="summary-row"><span>Time</span><strong id="summaryTime">-</strong></div>
+        </div>
+
+        <div class="actions">
+            <a class="secondary" href="app.html">Book again</a>
+            <a class="primary" href="index.html">Back home</a>
+        </div>
+    </div>
+
+    <script>
+        const booking = JSON.parse(localStorage.getItem('anywork365_latest_booking') || '{}');
+        const summaryService = document.getElementById('summaryService');
+        const summaryCity = document.getElementById('summaryCity');
+        const summaryTime = document.getElementById('summaryTime');
+
+        if (booking.service) summaryService.textContent = booking.service;
+        if (booking.city) summaryCity.textContent = booking.city;
+        if (booking.time) summaryTime.textContent = new Date(booking.time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+    </script>
+</body>
+
+</html>

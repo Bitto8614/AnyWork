@@ -8,8 +8,13 @@
     content="AnyWork365 helps people find trusted local home support for moving, cleaning, repairs, furniture setup, and everyday tasks when life gets busy." />
   <meta name="keywords"
     content="home help, local house support, moving help, cleaning service, furniture assembly, home support, trusted local professionals" />
+  <meta name="theme-color" content="#191a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="robots" content="index,follow" />
   <title>AnyWork365 | Home Help for Real Life</title>
   <link rel="canonical" href="https://anywork365.com/" />
+  <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -65,11 +70,14 @@
         <a href="/contact">Contact</a>
       </nav>
 
-      <div class="country-select-wrap">
-        <select id="country-currency-select" aria-label="Select your country">
-          <option value="USD">United States (USD)</option>
-          <option value="INR">India (INR)</option>
-        </select>
+      <div class="header-actions">
+        <button type="button" class="install-app-button" id="installAppButton" hidden>Install app</button>
+        <div class="country-select-wrap">
+          <select id="country-currency-select" aria-label="Select your country">
+            <option value="USD">United States (USD)</option>
+            <option value="INR">India (INR)</option>
+          </select>
+        </div>
       </div>
     </div>
   </header>
@@ -92,6 +100,10 @@
             trusted local help when you need it most.</p>
 
           <div class="city-select-wrap">
+            <div class="app-links-row">
+              <a href="/app.html" class="btn btn-ghost">Open app</a>
+              <a href="/helper-dashboard.html" class="btn btn-secondary">Helper dashboard</a>
+            </div>
             <label for="city-select">Select your city</label>
             <div class="select-shell">
               <select id="city-select" aria-label="Select country and city">

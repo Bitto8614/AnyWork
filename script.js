@@ -353,6 +353,49 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js").catch((error) => {
+        console.warn("Service worker registration failed:", error);
+      });
+    });
+  }
+
+  let deferredPrompt = null;
+  const installButton = document.getElementById("installAppButton");
+
+  if (installButton) {
+    const showInstallButton = () => {
+      installButton.hidden = false;
+    };
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      showInstallButton();
+    });
+
+    window.addEventListener("appinstalled", () => {
+      installButton.hidden = true;
+      deferredPrompt = null;
+    });
+
+    installButton.addEventListener("click", async () => {
+      if (!deferredPrompt) {
+        return;
+      }
+
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+
+      if (choiceResult.outcome === "accepted") {
+        installButton.hidden = true;
+      }
+
+      deferredPrompt = null;
+    });
+  }
+
   const form = document.getElementById("contactForm");
   if (form) {
     const API_BASE_URL = getApiBaseUrl();
