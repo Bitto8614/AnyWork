@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <link rel="canonical" href="{{CANONICAL}}" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESCRIPTION}}" />
+    <meta property="og:url" content="{{CANONICAL}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://anywork365.com/assets/og-image.png" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
+    <script type="application/ld+json">{{SCHEMA}}</script>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-wrap">
+            <a href="/" class="brand"><img src="/assets/logo.svg" alt="AnyWork365" class="brand-logo" /><span
+                    class="brand-text"><span class="brand-name">AnyWork365</span><span class="brand-tagline">Home help
+                        made easy</span></span></a>
+            <nav class="main-nav" aria-label="Primary navigation"><a href="/">Home</a><a href="/services">Services</a><a
+                    href="/how-it-works">How it works</a><a href="/contact">Contact</a></nav>
+        </div>
+    </header>
+    <main class="section">
+        <div class="container detail-page">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a
+                    href="/services/{{SLUG}}">{{SERVICE}}</a><span>/</span><span>{{CITY}}</span></nav>
+            <div class="detail-hero">
+                <span class="eyebrow">{{COUNTRY}} home help</span>
+                <h1>{{SERVICE}} in {{CITY}}</h1>
+                <p>{{INTRO}}</p>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-copy">
+                    <h2>Book {{SERVICE}} for your home</h2>
+                    <p>Use AnyWork365 to request {{SERVICE_LOWER}} in {{CITY}}. Tell us what you need, choose a suitable
+                        time, and receive a clear request summary before a helper is arranged.</p>
+                    <ul class="check-list detail-list">
+                        <li>Local booking request for {{CITY}}</li>
+                        <li>Flexible scheduling for homes and apartments</li>
+                        <li>Clear details and preferred timing</li>
+                        <li>Direct support from the AnyWork365 team</li>
+                    </ul>
+                </div>
+                <aside class="detail-panel">
+                    <h3>Request this service</h3>
+                    <p>Available for homes and apartments in {{CITY}}, {{COUNTRY}}.</p>
+                    <a href="/contact" class="btn btn-primary">Request {{SERVICE}}</a>
+                </aside>
+            </div>
+            <section class="detail-more">
+                <h2>Other {{CITY}} home services</h2>
+                <div class="service-grid">{{SERVICE_LINKS}}</div>
+            </section>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container footer-wrap">
+            <div class="brand footer-brand"><img src="/assets/logo.svg" alt="AnyWork365"
+                    class="brand-logo" /><span>AnyWork365</span></div>
+            <p>Trusted local help for homes, moving, and everyday life.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

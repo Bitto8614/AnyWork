@@ -794,6 +794,134 @@ app.post('/api/career/register', (req, res, next) => {
   }
 });
 
+const LOCATION_MARKETS = {
+  usa: {
+    name: 'United States',
+    symbol: 'USD',
+    cities: {
+      'new-york': 'New York',
+      'los-angeles': 'Los Angeles',
+      chicago: 'Chicago',
+      houston: 'Houston',
+      miami: 'Miami',
+      atlanta: 'Atlanta',
+      'san-francisco': 'San Francisco',
+      seattle: 'Seattle',
+      dallas: 'Dallas',
+      boston: 'Boston'
+    }
+  },
+  india: {
+    name: 'India',
+    symbol: 'INR',
+    cities: {
+      delhi: 'Delhi',
+      mumbai: 'Mumbai',
+      bengaluru: 'Bengaluru',
+      hyderabad: 'Hyderabad',
+      chennai: 'Chennai',
+      kolkata: 'Kolkata',
+      pune: 'Pune',
+      jaipur: 'Jaipur',
+      ahmedabad: 'Ahmedabad',
+      gurugram: 'Gurugram'
+    }
+  }
+};
+
+function renderLocationPage(req, res, countrySlug, citySlug, slug) {
+  const market = LOCATION_MARKETS[countrySlug];
+  if (!market || !market.cities[citySlug]) {
+    return res.status(404).send('Location not found.');
+  }
+
+  const services = readServices();
+  const service = slug
+    ? services.find((item) => item.slug === slug)
+    : null;
+
+  if (slug && !service) {
+    return res.status(404).send('Service not found.');
+  }
+
+  const city = market.cities[citySlug];
+  const country = market.name;
+  const templatePath = path.join(__dirname, 'location.html');
+  let html = fs.readFileSync(templatePath, 'utf8');
+
+  const pageService = service ? service.name : 'Home Services';
+  const title = service
+    ? `${pageService} in ${city} | AnyWork365`
+    : `Home Services in ${city}, ${country} | AnyWork365`;
+  const description = service
+    ? `Request ${pageService.toLowerCase()} in ${city}, ${country}. Compare availability and schedule trusted at-home help with AnyWork365.`
+    : `Find moving, cleaning, repairs, care, and everyday home help in ${city}, ${country} through AnyWork365.`;
+  const canonical = service
+    ? `https://anywork365.com/services/${slug}/${countrySlug}/${citySlug}`
+    : `https://anywork365.com/locations/${countrySlug}/${citySlug}`;
+
+  const localServices = services
+    .filter((item) => !item.country || item.country === countrySlug)
+    .slice(0, 8);
+  const serviceLinks = localServices.map((item) =>
+    `<article class="service-card"><h3><a href="/services/${item.slug}/${countrySlug}/${citySlug}">${item.name} in ${city}</a></h3><p>${escapeHtml(item.description).slice(0, 140)}</p></article>`
+  ).join('');
+
+  const schema = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': service ? 'Service' : 'LocalBusiness',
+    name: title,
+    description,
+    url: canonical,
+    areaServed: {
+      '@type': 'City',
+      name: city,
+      containedInPlace: { '@type': 'Country', name: country }
+    },
+    provider: {
+      '@type': 'Organization',
+      name: 'AnyWork365',
+      url: 'https://anywork365.com/'
+    }
+  });
+
+  const replacements = {
+    '{{TITLE}}': escapeHtml(title),
+    '{{DESCRIPTION}}': escapeHtml(description),
+    '{{CANONICAL}}': canonical,
+    '{{SCHEMA}}': schema.replace(/</g, '\\u003c'),
+    '{{SLUG}}': service ? service.slug : 'services',
+    '{{SERVICE}}': escapeHtml(pageService),
+    '{{CITY}}': escapeHtml(city),
+    '{{COUNTRY}}': escapeHtml(country),
+    '{{INTRO}}': escapeHtml(description),
+    '{{SERVICE_LOWER}}': escapeHtml(pageService.toLowerCase()),
+    '{{SERVICE_LINKS}}': serviceLinks
+  };
+
+  Object.entries(replacements).forEach(([token, value]) => {
+    html = html.split(token).join(value);
+  });
+
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  return res.status(200).send(html);
+}
+
+// Location landing pages and service-specific city pages.
+app.get('/locations/:country/:city', (req, res) => {
+  return renderLocationPage(req, res, req.params.country.toLowerCase(), req.params.city.toLowerCase(), null);
+});
+
+app.get('/services/:slug/:country/:city', (req, res) => {
+  return renderLocationPage(
+    req,
+    res,
+    req.params.country.toLowerCase(),
+    req.params.city.toLowerCase(),
+    req.params.slug.toLowerCase()
+  );
+});
+
 app.listen(PORT, () => {
   console.log(`AnyWork email API listening on http://localhost:${PORT}`);
 });
