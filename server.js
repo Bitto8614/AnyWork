@@ -18,6 +18,7 @@ const workersFilePath = path.join(__dirname, 'data', 'workers.json');
 const contactsFilePath = path.join(__dirname, 'data', 'contacts.json');
 const servicesFilePath = path.join(__dirname, 'data', 'services.json');
 const showcaseFilePath = path.join(__dirname, 'data', 'showcase.json');
+const reviewsFilePath = path.join(__dirname, 'data', 'reviews.json');
 const uploadsDir = path.join(__dirname, 'uploads', 'photo-ids');
 
 const DEFAULT_SERVICES = [
@@ -120,6 +121,15 @@ function readContacts() {
 
 function writeContacts(contacts) {
   writeJsonList(contactsFilePath, contacts);
+}
+
+function readReviews() {
+  ensureDataFile(reviewsFilePath);
+  return readJsonList(reviewsFilePath);
+}
+
+function writeReviews(reviews) {
+  writeJsonList(reviewsFilePath, reviews);
 }
 
 function ensureServicesFile() {
@@ -415,81 +425,82 @@ app.get('/api/showcase', (_req, res) => {
   return res.status(200).json({ showcase });
 });
 
-app.post('/api/admin/showcase', requireAdmin, (req, res) => {
-  const { name, role, blurb, rating, photo, order } = req.body || {};
+app.get('/api/reviews', (_req, res) => {
+  const reviews = readReviews()
+    .filter((review) => review.status === 'approved')
+    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+  return res.status(200).json({ reviews });
+});
 
-  if (!name || !role || !blurb || !photo) {
-    return res.status(400).json({ message: 'Please provide name, role, blurb, and a photo URL.' });
+app.post('/api/reviews', (req, res) => {
+  const { name, email, country, service, rating, review } = req.body || {};
+
+  if (!name || !email || !country || !service || !rating || !review) {
+    return res.status(400).json({ message: 'Please provide your name, email, country, service, rating, and review.' });
   }
 
   const ratingNumber = Number(rating);
-  if (!Number.isFinite(ratingNumber) || ratingNumber < 1 || ratingNumber > 5) {
-    return res.status(400).json({ message: 'Rating must be a number between 1 and 5.' });
+  if (!Number.isInteger(ratingNumber) || ratingNumber < 1 || ratingNumber > 5) {
+    return res.status(400).json({ message: 'Rating must be a whole number from 1 to 5.' });
   }
 
-  const showcase = readShowcase();
-  const newEntry = {
+  const cleanReview = String(review).trim();
+  if (cleanReview.length < 10 || cleanReview.length > 1000) {
+    return res.status(400).json({ message: 'Review must be between 10 and 1000 characters.' });
+  }
+
+  const reviews = readReviews();
+  const entry = {
     id: Date.now(),
-    name: String(name).trim(),
-    role: String(role).trim(),
-    blurb: String(blurb).trim(),
+    name: String(name).trim().slice(0, 80),
+    email: String(email).trim().slice(0, 160),
+    country: String(country).trim().slice(0, 40),
+    service: String(service).trim().slice(0, 80),
     rating: ratingNumber,
-    photo: String(photo).trim(),
-    order: Number.isFinite(Number(order)) ? Number(order) : showcase.length + 1,
+    review: cleanReview,
+    status: 'pending',
     createdAt: new Date().toISOString()
   };
 
-  showcase.push(newEntry);
-  writeShowcase(showcase);
+  reviews.push(entry);
+  writeReviews(reviews);
 
-  return res.status(201).json({ message: 'Showcase entry added.', entry: newEntry });
+  return res.status(201).json({
+    message: 'Thank you. Your review has been submitted and is awaiting approval.',
+    review: { id: entry.id, status: entry.status }
+  });
 });
 
-app.put('/api/admin/showcase/:id', requireAdmin, (req, res) => {
-  const { id } = req.params;
-  const showcase = readShowcase();
-  const index = showcase.findIndex((entry) => String(entry.id) === String(id));
+app.get('/api/admin/reviews', requireAdmin, (_req, res) => {
+  const reviews = readReviews().sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+  return res.status(200).json({ reviews });
+});
 
+app.put('/api/admin/reviews/:id/status', requireAdmin, (req, res) => {
+  const { status } = req.body || {};
+  if (!['pending', 'approved', 'rejected'].includes(status)) {
+    return res.status(400).json({ message: 'Status must be pending, approved, or rejected.' });
+  }
+
+  const reviews = readReviews();
+  const index = reviews.findIndex((entry) => String(entry.id) === String(req.params.id));
   if (index === -1) {
-    return res.status(404).json({ message: 'Showcase entry not found.' });
+    return res.status(404).json({ message: 'Review not found.' });
   }
 
-  const { name, role, blurb, rating, photo, order } = req.body || {};
-
-  if (rating !== undefined) {
-    const ratingNumber = Number(rating);
-    if (!Number.isFinite(ratingNumber) || ratingNumber < 1 || ratingNumber > 5) {
-      return res.status(400).json({ message: 'Rating must be a number between 1 and 5.' });
-    }
-  }
-
-  showcase[index] = {
-    ...showcase[index],
-    ...(name !== undefined ? { name: String(name).trim() } : {}),
-    ...(role !== undefined ? { role: String(role).trim() } : {}),
-    ...(blurb !== undefined ? { blurb: String(blurb).trim() } : {}),
-    ...(rating !== undefined ? { rating: Number(rating) } : {}),
-    ...(photo !== undefined ? { photo: String(photo).trim() } : {}),
-    ...(order !== undefined && Number.isFinite(Number(order)) ? { order: Number(order) } : {}),
-    updatedAt: new Date().toISOString()
-  };
-
-  writeShowcase(showcase);
-
-  return res.status(200).json({ message: 'Showcase entry updated.', entry: showcase[index] });
+  reviews[index] = { ...reviews[index], status, updatedAt: new Date().toISOString() };
+  writeReviews(reviews);
+  return res.status(200).json({ message: `Review marked ${status}.`, review: reviews[index] });
 });
 
-app.delete('/api/admin/showcase/:id', requireAdmin, (req, res) => {
-  const { id } = req.params;
-  const showcase = readShowcase();
-  const nextShowcase = showcase.filter((entry) => String(entry.id) !== String(id));
-
-  if (nextShowcase.length === showcase.length) {
-    return res.status(404).json({ message: 'Showcase entry not found.' });
+app.delete('/api/admin/reviews/:id', requireAdmin, (req, res) => {
+  const reviews = readReviews();
+  const nextReviews = reviews.filter((entry) => String(entry.id) !== String(req.params.id));
+  if (nextReviews.length === reviews.length) {
+    return res.status(404).json({ message: 'Review not found.' });
   }
-
-  writeShowcase(nextShowcase);
-  return res.status(200).json({ message: 'Showcase entry deleted.' });
+  writeReviews(nextReviews);
+  return res.status(200).json({ message: 'Review deleted.' });
 });
 
 app.get('/api/career/workers', requireAdmin, (_req, res) => {
