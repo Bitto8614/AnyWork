@@ -68,39 +68,9 @@
           your space.</p>
       </div>
 
-      <div class="review-grid">
-        <blockquote>
-          “Super quick, friendly, and very helpful. They helped me move my boxes and supplies into my temporary room
-          without stress.”
-          <footer>— Jordan R.</footer>
-        </blockquote>
-
-        <blockquote>
-          “I used AnyWork365 for a small furniture move and the service was smooth from start to finish. Highly
-          recommended.”
-          <footer>— Nina T.</footer>
-        </blockquote>
-
-        <blockquote>
-          “The booking process was easy, and the helper arrived fast. Great service for anyone relocating.”
-          <footer>— David P.</footer>
-        </blockquote>
-
-        <blockquote>
-          “I needed support for my motel setup and everything was handled smoothly and on time. I would use them again.”
-          <footer>— Melissa K.</footer>
-        </blockquote>
-
-        <blockquote>
-          “They helped us move furniture and unpack essentials in less than two hours. It took a huge weight off my
-          shoulders.”
-          <footer>— Aaron W.</footer>
-        </blockquote>
-
-        <blockquote>
-          “Professional, responsive, and straightforward. I booked online and it was easy to communicate with the team.”
-          <footer>— Trisha G.</footer>
-        </blockquote>
+      <div class="review-grid" id="approvedReviewGrid">
+        <p class="empty-review-state" id="reviewEmptyState">No approved customer reviews yet. Submitted reviews will
+          appear here after review and approval.</p>
       </div>
 
       <form id="reviewForm" class="contact-form review-form">
@@ -144,8 +114,6 @@
         <p id="reviewStatus" role="status"></p>
       </form>
 
-      <div class="review-grid" id="approvedReviewGrid">
-      </div>
     </div>
   </main>
 
@@ -181,6 +149,9 @@
         if (!response.ok || !Array.isArray(data.reviews)) return;
         if (data.reviews.length === 0) return;
 
+        const emptyState = document.getElementById('reviewEmptyState');
+        if (emptyState) emptyState.remove();
+
         const liveReviews = data.reviews.map((entry) => `
             <blockquote>
               “${escapeReviewText(entry.review)}”
@@ -199,7 +170,7 @@
       reviewStatus.textContent = 'Submitting your review...';
 
       try {
-        const response = await fetch('/api/reviews', {
+        const response = await fetch(`${API_BASE_URL}/api/reviews`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
