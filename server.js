@@ -23,7 +23,7 @@ const uploadsDir = path.join(__dirname, 'uploads', 'photo-ids');
 
 const DEFAULT_SERVICES = [
   { id: 1, slug: 'moving-help', name: 'Moving Help', description: "We provide reliable moving support for homes, apartments, and motel turnovers, including loading, carrying, and room-to-room setup. Our helpers arrive on time with the right equipment so your move stays on schedule from start to finish.", country: 'usa', image: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=900&q=80', icon: '', order: 1 },
-  { id: 2, slug: 'motel-move-in-support', name: 'Motel Move-In Support', description: "We provide hotel front desk support, housekeeping help, and room-ready assistance for guests moving in or checking out quickly. Whether you're settling in for a night or an extended stay, our helpers make sure your room is ready and your transition is stress-free.", country: 'usa', image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80', icon: '', order: 2 },
+  { id: 2, slug: 'motel-move-in-support', name: 'Motel Move-In Support', description: 'Hotel front desk, housekeeping, and room-ready assistance for guests moving in or checking out.', country: 'usa', image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80', icon: '', order: 2 },
   { id: 3, slug: 'furniture-setup', name: 'Furniture Setup', description: 'We provide furniture assembly, placement, and room setup for beds, tables, shelves, and essential items in guest rooms or apartments. Our helpers follow manufacturer instructions carefully and leave your space clean, organized, and ready to use.', country: 'usa', image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80', icon: '', order: 3 },
   { id: 4, slug: 'plumbing', name: 'Plumbing', description: 'Leak fixes, tap and pipe repairs, and fixture installation from trusted local plumbers. We match you with a verified plumber who diagnoses the issue quickly and explains the cost before any work begins.', country: 'india', image: 'https://images.pexels.com/photos/32588548/pexels-photo-32588548.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🔧', order: 4 },
   { id: 5, slug: 'electrical-work', name: 'Electrical Work', description: 'Wiring fixes, outlet and light installs, and home electrical safety checks. Our licensed electricians handle everything from small repairs to full fixture installs with safety as the top priority.', country: 'usa', image: 'https://images.pexels.com/photos/5691589/pexels-photo-5691589.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '⚡', order: 5 },
@@ -34,10 +34,11 @@ const DEFAULT_SERVICES = [
   { id: 10, slug: 'home-cleaning', name: 'Home Cleaner', description: 'Full home cleaning, tidying, and deep cleaning for a fresh, organized space. From daily tidy-ups to deep seasonal cleaning, our trained cleaners bring their own supplies and leave every room spotless.', country: 'india', image: 'https://images.pexels.com/photos/6195949/pexels-photo-6195949.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🧹', order: 10 },
   { id: 11, slug: 'bartender-help', name: 'Bartender Help', description: 'Skilled bartenders for house parties, events, and private gatherings. From classic cocktails to custom drink menus, our bartenders keep your guests served and your event running smoothly.', country: 'india', image: 'https://images.pexels.com/photos/4485379/pexels-photo-4485379.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🍸', order: 11 },
   { id: 12, slug: 'nursing', name: 'Nursing', description: 'Qualified nurses for at-home care, injections, wound dressing, and elderly support. Our nurses are background-checked and experienced in providing safe, compassionate medical care outside the hospital setting.', country: 'india', image: 'https://images.pexels.com/photos/5430213/pexels-photo-5430213.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🩹', order: 12 },
-  { id: 13, slug: 'on-demand-doctors', name: 'On-Demand Doctors', description: 'Licensed doctors available for home visits, consultations, and urgent medical advice. Skip the waiting room and get trusted medical guidance for non-emergency concerns from the comfort of your home.', country: 'india', image: 'https://images.pexels.com/photos/7659873/pexels-photo-7659873.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🩺', order: 13 },
+  { id: 13, slug: 'on-demand-doctors', name: 'On-Demand Doctors', description: 'Request a suitable licensed medical professional for a non-emergency home consultation. Credentials, availability, scope, and fees are confirmed before booking.', country: 'india', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80', icon: '🩺', order: 13 },
   { id: 14, slug: 'driver-help', name: 'Driver Help', description: 'Reliable drivers for vacations, road trips, hospital visits, and everyday errands. Our vetted drivers know the local roads well and prioritize safety and punctuality on every trip.', country: 'usa', image: 'https://images.pexels.com/photos/29333059/pexels-photo-29333059.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🚖', order: 14 },
   { id: 15, slug: 'old-age-care', name: 'Old Age Care', description: 'Compassionate caregivers for elderly support, daily assistance, companionship, and medication reminders at home. Every caregiver is trained to provide patient, dependable support so families can have peace of mind.', country: 'usa', image: 'https://images.pexels.com/photos/7551661/pexels-photo-7551661.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '🧓', order: 15 },
-  { id: 16, slug: 'construction-work', name: 'Construction Work', description: 'Skilled construction and handyman crews for home renovations, repairs, and small building projects. From framing, drywall, and painting to flooring, decks, and additions, our vetted construction professionals bring the right tools and experience to get the job done safely and on schedule, with transparent pricing before work begins.', country: 'usa', image: 'https://images.pexels.com/photos/11293624/pexels-photo-11293624.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '', order: 16 }
+  { id: 16, slug: 'construction-work', name: 'Construction Work', description: 'Skilled construction and handyman crews for home renovations, repairs, and small building projects. From framing, drywall, and painting to flooring, decks, and additions, our vetted construction professionals bring the right tools and experience to get the job done safely and on schedule, with transparent pricing before work begins.', country: 'usa', image: 'https://images.pexels.com/photos/11293624/pexels-photo-11293624.jpeg?auto=compress&cs=tinysrgb&w=900', icon: '', order: 16 },
+  { id: 17, slug: 'hotel-help', name: 'Hotel Help', description: 'Hotel room setup, housekeeping support, guest turnover help, and room-ready assistance for hotels and guest stays.', country: 'india', image: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=900&q=80', icon: '🏨', order: 17 }
 ];
 
 function ensureDir(dirPath) {
@@ -180,6 +181,10 @@ function writeShowcase(entries) {
 }
 
 function requireAdmin(req, res, next) {
+  if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+    return res.status(503).json({ message: 'Admin access is not configured.' });
+  }
+
   const authHeader = req.headers.authorization || '';
   const expected = `Basic ${Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64')}`;
 
@@ -444,12 +449,27 @@ app.post('/api/reviews', (req, res) => {
     return res.status(400).json({ message: 'Rating must be a whole number from 1 to 5.' });
   }
 
+  const cleanEmail = String(email).trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    return res.status(400).json({ message: 'Please provide a valid email address.' });
+  }
+
   const cleanReview = String(review).trim();
   if (cleanReview.length < 10 || cleanReview.length > 1000) {
     return res.status(400).json({ message: 'Review must be between 10 and 1000 characters.' });
   }
 
   const reviews = readReviews();
+  const cutoff = Date.now() - (24 * 60 * 60 * 1000);
+  const duplicate = reviews.find((existing) =>
+    String(existing.email || '').toLowerCase() === cleanEmail &&
+    String(existing.service || '').toLowerCase() === String(service).trim().toLowerCase() &&
+    new Date(existing.createdAt || 0).getTime() > cutoff
+  );
+  if (duplicate) {
+    return res.status(409).json({ message: 'A review for this service was already submitted recently.' });
+  }
+
   const entry = {
     id: Date.now(),
     name: String(name).trim().slice(0, 80),
@@ -931,6 +951,10 @@ app.get('/services/:slug/:country/:city', (req, res) => {
     req.params.city.toLowerCase(),
     req.params.slug.toLowerCase()
   );
+});
+
+app.get('/hotel-help', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'services', 'hotel-help.html'));
 });
 
 app.listen(PORT, () => {

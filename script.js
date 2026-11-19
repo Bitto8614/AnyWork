@@ -78,8 +78,45 @@ document.addEventListener("DOMContentLoaded", () => {
       country: "india",
       image: "https://images.pexels.com/photos/5430213/pexels-photo-5430213.jpeg?auto=compress&cs=tinysrgb&w=900",
       icon: "🩹"
+    },
+    {
+      slug: "hotel-help",
+      name: "Hotel Help",
+      description: "Hotel room setup, housekeeping support, guest turnover, and room-ready assistance.",
+      country: "india",
+      image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=900&q=80",
+      icon: "🏨"
+    },
+    {
+      slug: "on-demand-doctors",
+      name: "On-Demand Doctors",
+      description: "Request a suitable licensed medical professional for a non-emergency home consultation.",
+      country: "india",
+      image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80",
+      icon: "🩺"
     }
   ];
+
+  const USA_SERVICE_PRESENTATION = {
+    "motel-move-in-support": {
+      name: "Motel Move-In Support",
+      description: "Motel room setup, housekeeping support, guest turnover help, and room-ready assistance.",
+      image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80"
+    }
+  };
+
+  const INDIA_SERVICE_PRESENTATION = {
+    "motel-move-in-support": {
+      name: "Hotel Help",
+      description: "Hotel room setup, housekeeping support, guest turnover help, and room-ready assistance for hotels and extended stays.",
+      image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=900&q=80"
+    },
+    "on-demand-doctors": {
+      name: "On-Demand Doctors",
+      description: "Request a suitable licensed medical professional for a non-emergency home consultation, subject to location and credential confirmation.",
+      image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=900&q=80"
+    }
+  };
 
   const yearNode = document.getElementById("year");
   if (yearNode) {
@@ -260,7 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const isIndia = active === "INR";
 
     options.forEach((option) => {
-      const shouldShow = isIndia && isCountryVisible(option.dataset.country, active);
+      const rawCountry = (option.dataset.country || "")
+        .replace("USA", "us")
+        .replace("IN", "india");
+      const shouldShow = isCountryVisible(rawCountry, active);
       option.hidden = !shouldShow;
       option.disabled = !shouldShow;
     });
@@ -279,8 +319,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }[char]));
 
   const renderServiceCard = (service) => {
-    const media = service.image
-      ? `<img src="${escapeHtml(service.image)}" alt="${escapeHtml(service.name)}" />`
+    const activeCurrency = (safeStorage.get("anywork_currency", "USD") || "USD").toUpperCase();
+    const isIndia = activeCurrency === "INR";
+    const presentation = isIndia
+      ? INDIA_SERVICE_PRESENTATION[service.slug]
+      : USA_SERVICE_PRESENTATION[service.slug];
+    const displayName = presentation?.name || service.name;
+    const displayDescription = presentation?.description || service.description;
+    const displayImage = presentation?.image || service.image;
+
+    const media = displayImage
+      ? `<img src="${escapeHtml(displayImage)}" alt="${escapeHtml(displayName)}" />`
       : `<div class="service-icon-block" aria-hidden="true">${escapeHtml(service.icon || "🔧")}</div>`;
 
     return `
@@ -288,8 +337,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <article class="service-card">
           ${media}
           <div class="service-card-content">
-            <h3>${escapeHtml(service.name)}</h3>
-            <p>${escapeHtml(service.description)}</p>
+            <h3>${escapeHtml(displayName)}</h3>
+            <p>${escapeHtml(displayDescription)}</p>
             <span class="service-card-footer">Learn more</span>
           </div>
         </article>
@@ -334,6 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
       loadedServices = fallbackServices;
     }
 
+    serviceGridEl.dataset.loadedServices = JSON.stringify(loadedServices);
     serviceGridEl.innerHTML = loadedServices.map(renderServiceCard).join("");
     applyCountryServices(safeStorage.get("anywork_currency", "USD"));
   };
@@ -419,6 +469,17 @@ document.addEventListener("DOMContentLoaded", () => {
       applyPublicPhone(event.target.value);
       applyCountryServices(event.target.value);
       applyCountryFormOptions(event.target.value);
+
+      const serviceGridEl = document.getElementById("service-grid") || document.getElementById("services-catalog-grid");
+      if (serviceGridEl && serviceGridEl.dataset.loadedServices) {
+        try {
+          const loadedServices = JSON.parse(serviceGridEl.dataset.loadedServices);
+          serviceGridEl.innerHTML = loadedServices.map(renderServiceCard).join("");
+          applyCountryServices(event.target.value);
+        } catch (error) {
+          console.warn("Unable to refresh country-specific service cards", error);
+        }
+      }
     });
   }
 
