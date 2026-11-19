@@ -159,6 +159,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const offerCopyInr = document.querySelectorAll(".offer-copy-inr");
   const storedCurrency = safeStorage.get("anywork_currency", "USD");
 
+  const applyPublicPhone = (currency) => {
+    const isIndia = String(currency).toUpperCase() === "INR";
+    const display = isIndia ? "+91 8076235091" : "2192763746";
+    const href = isIndia ? "tel:+918076235091" : "tel:2192763746";
+
+    document.querySelectorAll("[data-country-phone]").forEach((phoneLink) => {
+      phoneLink.textContent = display;
+      phoneLink.setAttribute("href", href);
+      phoneLink.setAttribute("aria-label", `Call AnyWork365 at ${display}`);
+    });
+  };
+
   const applyCurrency = (currency) => {
     const isIndia = currency === "INR";
 
@@ -404,6 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
     countrySelect.value = storedCurrency;
     countrySelect.addEventListener("change", (event) => {
       applyCurrency(event.target.value);
+      applyPublicPhone(event.target.value);
       applyCountryServices(event.target.value);
       applyCountryFormOptions(event.target.value);
     });
@@ -415,6 +428,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyCountryServices(storedCurrency);
   applyCountryFormOptions(storedCurrency);
+  applyPublicPhone(storedCurrency);
 
   const citySelect = document.getElementById("city-select");
   const serviceGrid = document.getElementById("service-grid");

@@ -1,149 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Contact AnyWork365 for fast help with moving, home services, cleaning, and more. Reach our support team by phone, email, or the contact form." />
-    <meta name="keywords" content="contact AnyWork365, book a service request, request a local helper, customer support for home services" />
-    <title>Contact | AnyWork365</title>
-    <link rel="canonical" href="https://anywork365.com/contact" />
-    <!-- Favicon-->
-    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="/assets/favicon-180.png" />
 
-    <!-- Open Graph / social preview -->
-    <meta property="og:title" content="Contact | AnyWork365" />
-    <meta property="og:description" content="Contact AnyWork365 for fast help with moving, home services, cleaning, and more. Reach our support team by phone, email, or the contact form." />
-    <meta property="og:image" content="https://anywork365.com/assets/og-image.png" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://anywork365.com/contact" />
-    <meta name="twitter:card" content="summary_large_image" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Contact AnyWork365 for fast help with moving, home services, cleaning, and more. Reach our support team by phone, email, or the contact form." />
+  <meta name="keywords"
+    content="contact AnyWork365, book a service request, request a local helper, customer support for home services" />
+  <title>Contact | AnyWork365</title>
+  <link rel="canonical" href="https://anywork365.com/contact" />
+  <!-- Favicon-->
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/favicon-180.png" />
 
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container nav-wrap">
-        <a href="/" class="brand"><img src="assets/logo.svg" alt="AnyWork365 logo" class="brand-logo" /><span class="brand-text"><span class="brand-name">AnyWork365</span><span class="brand-tagline">Need help? We're here.</span></span></a>
-        <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav" aria-label="Toggle navigation menu"><span></span><span></span><span></span></button>
-        <nav class="main-nav" id="mainNav">
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/services">Services</a>
-          <a href="/careers">Careers</a>
-          <a href="/contact">Contact</a>
-        </nav>
-        <div class="country-select-wrap">
-          <select id="country-currency-select" aria-label="Select your country">
-            <option value="USD">United States (USD)</option>
-            <option value="INR">India (INR)</option>
+  <!-- Open Graph / social preview -->
+  <meta property="og:title" content="Contact | AnyWork365" />
+  <meta property="og:description"
+    content="Contact AnyWork365 for fast help with moving, home services, cleaning, and more. Reach our support team by phone, email, or the contact form." />
+  <meta property="og:image" content="https://anywork365.com/assets/og-image.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://anywork365.com/contact" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="/" class="brand"><img src="assets/logo.svg" alt="AnyWork365 logo" class="brand-logo" /><span
+          class="brand-text"><span class="brand-name">AnyWork365</span><span class="brand-tagline">Need help? We're
+            here.</span></span></a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav"
+        aria-label="Toggle navigation menu"><span></span><span></span><span></span></button>
+      <nav class="main-nav" id="mainNav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/services">Services</a>
+        <a href="/careers">Careers</a>
+        <a href="/contact">Contact</a>
+      </nav>
+      <div class="country-select-wrap">
+        <select id="country-currency-select" aria-label="Select your country">
+          <option value="USD">United States (USD)</option>
+          <option value="INR">India (INR)</option>
+        </select>
+      </div>
+      <a href="/#contact" class="btn btn-primary">Book a Helper</a>
+    </div>
+  </header>
+
+  <main class="section contact">
+    <div class="container contact-wrap">
+      <div class="contact-copy">
+        <span class="eyebrow">Need help today?</span>
+        <h1>Let us help you settle in faster.</h1>
+        <p>Reach out for moving support, furniture setup, hotel room help, or cleanup requests.</p>
+        <div class="contact-direct">
+          <div class="contact-direct-item"><strong>Email:</strong> <a
+              href="mailto:support@anywork365.com">support@anywork365.com</a></div>
+          <div class="contact-direct-item"><strong>Phone:</strong> <a href="tel:2192763746"
+              data-country-phone>2192763746</a></div>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <p class="form-section-title">Your details</p>
+        <label>Full name<input type="text" name="name" required /></label>
+        <div class="form-row">
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Phone<input type="tel" name="phone" required /></label>
+        </div>
+
+        <p class="form-section-title">Job details</p>
+        <label>Service needed
+          <select name="service" required>
+            <option value="">Select a service</option>
+            <option>Moving help</option>
+            <option>Motel move-in support</option>
+            <option>Furniture setup</option>
+            <option>Packing & unpacking</option>
+            <option>Plumbing</option>
+            <option>Electrical work</option>
+            <option>Spa & massage</option>
+            <option>Haircut & salon</option>
+            <option>Car cleaning</option>
+            <option>Home cook</option>
+            <option>Home cleaning</option>
+            <option>Bartender help</option>
+            <option>Nursing</option>
+            <option>On-demand doctors</option>
+            <option>Driver help</option>
+            <option>Old age care</option>
+            <option>Construction work</option>
           </select>
-        </div>
-        <a href="/#contact" class="btn btn-primary">Book a Helper</a>
-      </div>
-    </header>
-
-    <main class="section contact">
-      <div class="container contact-wrap">
-        <div class="contact-copy">
-          <span class="eyebrow">Need help today?</span>
-          <h1>Let us help you settle in faster.</h1>
-          <p>Reach out for moving support, furniture setup, hotel room help, or cleanup requests.</p>
-          <div class="contact-direct">
-            <div class="contact-direct-item"><strong>Email:</strong> <a href="mailto:support@anywork365.com">support@anywork365.com</a></div>
-            <div class="contact-direct-item"><strong>Phone:</strong> <a href="tel:+12192763746">+1 219-276-3746</a></div>
-          </div>
-        </div>
-
-        <form class="contact-form" id="contactForm">
-          <p class="form-section-title">Your details</p>
-          <label>Full name<input type="text" name="name" required /></label>
-          <div class="form-row">
-            <label>Email<input type="email" name="email" required /></label>
-            <label>Phone<input type="tel" name="phone" required /></label>
-          </div>
-
-          <p class="form-section-title">Job details</p>
-          <label>Service needed
-            <select name="service" required>
-              <option value="">Select a service</option>
-              <option>Moving help</option>
-              <option>Motel move-in support</option>
-              <option>Furniture setup</option>
-              <option>Packing & unpacking</option>
-              <option>Plumbing</option>
-              <option>Electrical work</option>
-              <option>Spa & massage</option>
-              <option>Haircut & salon</option>
-              <option>Car cleaning</option>
-              <option>Home cook</option>
-              <option>Home cleaning</option>
-              <option>Bartender help</option>
-              <option>Nursing</option>
-              <option>On-demand doctors</option>
-              <option>Driver help</option>
-              <option>Old age care</option>
-              <option>Construction work</option>
+        </label>
+        <label>Service address or city & ZIP<input type="text" name="address"
+            placeholder="e.g. 123 Main St, Chicago, IL 60601" required /></label>
+        <div class="form-row">
+          <label>Preferred date <span class="form-hint">(optional)</span><input type="date"
+              name="preferredDate" /></label>
+          <label>Preferred time
+            <select name="preferredTime">
+              <option value="">No preference</option>
+              <option>Morning (8am - 12pm)</option>
+              <option>Afternoon (12pm - 5pm)</option>
+              <option>Evening (5pm - 9pm)</option>
+              <option>Flexible / anytime</option>
             </select>
           </label>
-          <label>Service address or city & ZIP<input type="text" name="address" placeholder="e.g. 123 Main St, Chicago, IL 60601" required /></label>
-          <div class="form-row">
-            <label>Preferred date <span class="form-hint">(optional)</span><input type="date" name="preferredDate" /></label>
-            <label>Preferred time
-              <select name="preferredTime">
-                <option value="">No preference</option>
-                <option>Morning (8am - 12pm)</option>
-                <option>Afternoon (12pm - 5pm)</option>
-                <option>Evening (5pm - 9pm)</option>
-                <option>Flexible / anytime</option>
-              </select>
-            </label>
-          </div>
-          <div class="form-row">
-            <label>How many hours do you need help for?
-              <select name="hoursNeeded" required>
-                <option value="">Select duration</option>
-                <option>1-2 hours</option>
-                <option>3-5 hours</option>
-                <option>Half day (6 hours)</option>
-                <option>Full day (8+ hours)</option>
-                <option>Multi-day project</option>
-              </select>
-            </label>
-            <label>How urgent is this?
-              <select name="urgency" required>
-                <option value="">Select urgency</option>
-                <option>ASAP / today</option>
-                <option>Within a few days</option>
-                <option>Within a week</option>
-                <option>Flexible / just planning</option>
-              </select>
-            </label>
-          </div>
-
-          <p class="form-section-title">How should we reach you?</p>
-          <label>Preferred contact method
-            <select name="contactMethod" required>
-              <option value="">Select a method</option>
-              <option>Phone call</option>
-              <option>Text / SMS</option>
-              <option>Email</option>
+        </div>
+        <div class="form-row">
+          <label>How many hours do you need help for?
+            <select name="hoursNeeded" required>
+              <option value="">Select duration</option>
+              <option>1-2 hours</option>
+              <option>3-5 hours</option>
+              <option>Half day (6 hours)</option>
+              <option>Full day (8+ hours)</option>
+              <option>Multi-day project</option>
             </select>
           </label>
-          <label>Details<textarea name="details" rows="4" required></textarea></label>
-          <button type="submit" class="btn btn-primary">Send Request</button>
-        </form>
-      </div>
-    </main>
+          <label>How urgent is this?
+            <select name="urgency" required>
+              <option value="">Select urgency</option>
+              <option>ASAP / today</option>
+              <option>Within a few days</option>
+              <option>Within a week</option>
+              <option>Flexible / just planning</option>
+            </select>
+          </label>
+        </div>
 
-    <footer class="site-footer">
-      <div class="container footer-wrap">
-        <div class="brand footer-brand"><img src="assets/logo.svg" alt="AnyWork365 logo" class="brand-logo" /><span>AnyWork365</span></div>
-        <p>Trusted local help for moving, home services, and everyday life — all in one place.</p>
-        <p>© <span id="year"></span> AnyWork365.</p>
-      </div>
-    </footer>
-    <script src="script.js"></script>
-  </body>
+        <p class="form-section-title">How should we reach you?</p>
+        <label>Preferred contact method
+          <select name="contactMethod" required>
+            <option value="">Select a method</option>
+            <option>Phone call</option>
+            <option>Text / SMS</option>
+            <option>Email</option>
+          </select>
+        </label>
+        <label>Details<textarea name="details" rows="4" required></textarea></label>
+        <button type="submit" class="btn btn-primary">Send Request</button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-wrap">
+      <div class="brand footer-brand"><img src="assets/logo.svg" alt="AnyWork365 logo"
+          class="brand-logo" /><span>AnyWork365</span></div>
+      <p>Trusted local help for moving, home services, and everyday life — all in one place.</p>
+      <p>© <span id="year"></span> AnyWork365.</p>
+    </div>
+  </footer>
+  <script src="script.js?v=20261119-phone"></script>
+</body>
+
 </html>
