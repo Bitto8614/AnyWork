@@ -539,6 +539,60 @@ app.delete('/api/career/:id', requireAdmin, (req, res) => {
   return res.status(200).json({ message: 'Worker deleted successfully.' });
 });
 
+app.post('/api/booking', async (req, res) => {
+  const {
+    name = 'App User',
+    email = 'customer@anywork365.app',
+    phone = 'Not provided',
+    service,
+    city,
+    time,
+    details = 'Booked through the AnyWork365 mobile app.'
+  } = req.body || {};
+
+  if (!service || !city || !time) {
+    return res.status(400).json({
+      message: 'Please provide a service, city, and preferred time.'
+    });
+  }
+
+  const contacts = readContacts();
+  const booking = {
+    id: Date.now(),
+    name: String(name).trim(),
+    email: String(email).trim(),
+    phone: String(phone).trim(),
+    service: String(service).trim(),
+    address: String(city).trim(),
+    preferredDate: time,
+    preferredTime: time,
+    hoursNeeded: 'Flexible',
+    urgency: 'Flexible',
+    contactMethod: 'phone',
+    details: String(details).trim(),
+    status: 'new',
+    createdAt: new Date().toISOString()
+  };
+
+  contacts.push(booking);
+  writeContacts(contacts);
+
+  return res.status(200).json({
+    message: 'Booking request submitted successfully.',
+    booking
+  });
+});
+
+app.get('/api/bookings', (_req, res) => {
+  const contacts = readContacts();
+  const bookings = [...contacts].sort((a, b) => {
+    const aTime = new Date(a.preferredDate || a.createdAt || 0).getTime();
+    const bTime = new Date(b.preferredDate || b.createdAt || 0).getTime();
+    return bTime - aTime;
+  });
+  return res.status(200).json({ bookings });
+});
+
 app.get('/api/contact/list', requireAdmin, (_req, res) => {
   const contacts = readContacts();
   return res.status(200).json({ contacts });

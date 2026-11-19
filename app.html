@@ -476,16 +476,65 @@
     <script>
         const form = document.getElementById('bookingForm');
         const toast = document.getElementById('bookingToast');
+        const getApiBaseUrl = () => {
+            if (window.location.protocol === 'file:') {
+                return '';
+            }
+            return window.location.origin;
+        };
 
-        form.addEventListener('submit', (event) => {
+        form.addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const formData = new FormData(form);
             const booking = Object.fromEntries(formData.entries());
-            localStorage.setItem('anywork365_latest_booking', JSON.stringify(booking));
+            const payload = {
+                name: 'App User',
+                email: 'customer@anywork365.app',
+                phone: 'Not provided',
+                service: booking.service,
+                city: booking.city,
+                time: booking.time,
+                details: `Booked through the AnyWork365 mobile app for ${booking.service} in ${booking.city}.`,
+                hoursNeeded: 'Flexible',
+                address: booking.city,
+                urgency: 'Flexible',
+                contactMethod: 'phone'
+            };
 
+            const apiBaseUrl = getApiBaseUrl();
+            let serverMessage = '';
+
+            if (apiBaseUrl) {
+                try {
+                    const response = await fetch(`${apiBaseUrl}/api/booking`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Booking failed');
+                    }
+                    serverMessage = data.message || 'Booking request submitted successfully.';
+                } catch (error) {
+                    console.warn('Booking API unavailable, saving locally instead:', error);
+                    serverMessage = 'Saved locally. We will contact you when the service team reviews your request.';
+                }
+            }
+
+            localStorage.setItem('anywork365_latest_booking', JSON.stringify({
+                ...booking,
+                message: serverMessage
+            }));
+
+            toast.textContent = serverMessage || 'Your request has been sent successfully.';
             toast.style.display = 'block';
             form.reset();
+
             setTimeout(() => {
                 window.location.href = 'booking-confirmation.html';
             }, 500);

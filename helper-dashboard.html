@@ -279,7 +279,7 @@
         <section class="stats-grid">
             <article class="stat-card">
                 <small>Jobs booked</small>
-                <strong>28</strong>
+                <strong id="jobCount">28</strong>
             </article>
             <article class="stat-card">
                 <small>Completed</small>
@@ -299,7 +299,7 @@
             <section class="card">
                 <h2>Open requests</h2>
 
-                <div class="job-list">
+                <div class="job-list" id="jobList">
                     <article class="job-item">
                         <div>
                             <strong>Furniture setup</strong>
@@ -362,6 +362,102 @@
             </aside>
         </div>
     </div>
+
+    <script>
+        const jobList = document.getElementById('jobList');
+        const statCount = document.getElementById('jobCount');
+
+        const defaultJobs = [
+            {
+                service: 'Furniture setup',
+                address: 'Brooklyn, NY',
+                preferredDate: '2026-11-19T10:30',
+                status: 'pending'
+            },
+            {
+                service: 'Home cleaning',
+                address: 'Manhattan, NY',
+                preferredDate: '2026-11-19T13:00',
+                status: 'accepted'
+            },
+            {
+                service: 'Plumbing fix',
+                address: 'Queens, NY',
+                preferredDate: '2026-11-20T09:00',
+                status: 'review'
+            }
+        ];
+
+        const getApiBaseUrl = () => {
+            if (window.location.protocol === 'file:') {
+                return 'http://localhost:8000';
+            }
+            return window.location.origin;
+        };
+
+        const formatDate = (value) => {
+            if (!value) return 'Date pending';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return value;
+            return date.toLocaleString([], {
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        };
+
+        const renderJob = (booking) => {
+            const article = document.createElement('article');
+            article.className = 'job-item';
+
+            const service = booking.service || 'Service request';
+            const location = booking.address || booking.city || 'Location pending';
+            const date = formatDate(booking.preferredDate || booking.createdAt || new Date());
+            const status = (booking.status || 'pending').toLowerCase();
+            const statusLabel = status === 'accepted' ? 'Accepted' : status === 'review' ? 'Review' : 'Pending';
+            const statusClass = status === 'accepted' ? 'accepted' : status === 'review' ? 'review' : 'pending';
+
+            article.innerHTML = `
+                <div>
+                    <strong>${service}</strong>
+                    <small>${date} • ${location}</small>
+                </div>
+                <span class="pill ${statusClass}">${statusLabel}</span>
+            `;
+
+            jobList.appendChild(article);
+        };
+
+        const renderJobs = (jobs) => {
+            jobList.innerHTML = '';
+            if (!jobs || jobs.length === 0) {
+                defaultJobs.forEach(renderJob);
+                return;
+            }
+
+            jobs.forEach(renderJob);
+            if (statCount) {
+                statCount.textContent = String(jobs.length);
+            }
+        };
+
+        const loadJobs = async () => {
+            try {
+                const response = await fetch(`${getApiBaseUrl()}/api/bookings`);
+                const data = await response.json();
+                if (!response.ok || !Array.isArray(data.bookings)) {
+                    throw new Error('Bookings unavailable');
+                }
+                renderJobs(data.bookings);
+            } catch (error) {
+                console.warn('Using fallback booking data:', error);
+                renderJobs(defaultJobs);
+            }
+        };
+
+        loadJobs();
+    </script>
 </body>
 
 </html>
